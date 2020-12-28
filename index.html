@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Graph Visualizer</title>
+	<style type="text/css">
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body{
+			margin: 0px;
+		}
+
+		header {
+			margin: 0;
+			padding: 0px;
+			color: white;
+			background-color: #666;
+		}
+
+		.toolbar-div button {
+			background-color: #666;
+			color: white;
+			padding: 16px;
+			margin: 0;
+			font-size: 16px;
+			border: none;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {background-color: #ddd;}
+
+		.dropdown:hover .dropdown-content {display: block;}
+
+		.toolbar-div:hover button {background-color: #3e8e41 !important;}
+
+		.toolbar-div{
+			position: relative;
+			display: inline-block;
+			margin:0;
+		}
+
+		#title{
+			position: relative;
+			display: inline-block;
+			margin-left: 10px !important;
+		}
+
+		.runbtn{
+			background-color: #4CAF50 !important;
+		}
+
+		#toolbar-left{
+			position: absolute;
+			background: #e6e3e3;   
+			width: 60px;
+			height: 180px; 
+  			transform: translate(0, 125%);
+			left: 0;
+			top: 0;
+		}
+
+	</style>
+</head>
+<body>
+	<header>
+		<div id="title" style="margin-left:0;">
+			<p><b>Graph Algorithm Visualizer</b></p>
+		</div>
+		<div class="toolbar-div">
+				<button>New Graph</button>
+		</div>
+		<div class="dropdown toolbar-div">
+			<button class="dropbtn">Choose Algorithm &#9662;</button>
+			<div class="dropdown-content">
+				<a>Dijkstra's</a>
+				<a>Breadth Frist Search</a>
+				<a>Depth Frist Search</a>
+				<a>Topological Sort</a>
+			</div>
+		</div>
+		<div class="toolbar-div">
+			<button class="runbtn">Run!</button>
+		</div>
+	</header>
+	<div id="toolbar-left">
+		<img src="imgs/Node.png" width="60px"></img>
+		<img src="imgs/edge.png" width="60px"></img>
+		<img src="imgs/move.png" width="60px"></img>
+	</div>
+</body>
+</html>

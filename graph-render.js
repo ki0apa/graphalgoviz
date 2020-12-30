@@ -1,38 +1,163 @@
-import "g6"
-// The source data
-const data = {
-    // The array of nodes
-    nodes: [
-      {
-        id: 'node1',
-        x: 100,
-        y: 200,
-      },
-      {
-        id: 'node2',
-        x: 300,
-        y: 200,
-      },
-    ],
-    // The array of edges
-    edges: [
-      // An edge links from node1 to node2
-      {
-        source: 'node1',
-        target: 'node2',
-      },
-    ],
-  };
-  
-  // Instantiate the Graph
-  const graph = new G6.Graph({
-    container: 'mountNode', // The container id or HTML node of the graph canvas.
-    // The width and the height of graph canvas
-    width: 800,
-    height: 500,
-  });
-  // Load the data
-  graph.data(data);
-  // Render the graph
-  graph.render();
-  
+window.onload = function(){
+          let addedCount = 0;
+        // Register a custom behavior: add a node when user click the blank part of canvas
+        G6.registerBehavior('click-add-node', {
+          // Set the events and the corresponding responsing function for this behavior
+          getEvents() {
+            // The event is canvas:click, the responsing function is onClick
+            return {
+              'canvas:click': 'onClick',
+            };
+          },
+          // Click event
+          onClick(ev) {
+            const self = this;
+            const graph = self.graph;
+            // Add a new node
+            graph.addItem('node', {
+              x: ev.canvasX,
+              y: ev.canvasY,
+              id: `node-${addedCount}`, // Generate the unique id
+            });
+            addedCount++;
+          },
+        });
+        // Register a custom behavior: click two end nodes to add an edge
+        G6.registerBehavior('click-add-edge', {
+          // Set the events and the corresponding responsing function for this behavior
+          getEvents() {
+            return {
+              'node:click': 'onClick', // The event is canvas:click, the responsing function is onClick
+              mousemove: 'onMousemove', // The event is mousemove, the responsing function is onMousemove
+              'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
+            };
+          },
+          // The responsing function for node:click defined in getEvents
+          onClick(ev) {
+            const self = this;
+            const node = ev.item;
+            const graph = self.graph;
+            // The position where the mouse clicks
+            const point = { x: ev.x, y: ev.y };
+            const model = node.getModel();
+            if (self.addingEdge && self.edge) {
+              graph.updateItem(self.edge, {
+                target: model.id,
+              });
+
+              self.edge = null;
+              self.addingEdge = false;
+            } else {
+              // Add anew edge, the end node is the current node user clicks
+              self.edge = graph.addItem('edge', {
+                source: model.id,
+                target: model.id,
+              });
+              self.addingEdge = true;
+            }
+          },
+          // The responsing function for mousemove defined in getEvents
+          onMousemove(ev) {
+            const self = this;
+            // The current position the mouse clicks
+            const point = { x: ev.x, y: ev.y };
+            if (self.addingEdge && self.edge) {
+              // Update the end node to the current node the mouse clicks
+              self.graph.updateItem(self.edge, {
+                target: point,
+              });
+            }
+          },
+          // The responsing function for edge:click defined in getEvents
+          onEdgeClick(ev) {
+            const self = this;
+            const currentEdge = ev.item;
+            if (self.addingEdge && self.edge === currentEdge) {
+              self.graph.removeItem(self.edge);
+              self.edge = null;
+              self.addingEdge = false;
+            }
+          },
+        });
+        // Initial data
+        const data = {
+          nodes: [
+            {
+              id: 'node1',
+              x: 300,
+              y: 200,
+            },
+            {
+              id: 'node2',
+              x: 300,
+              y: 200,
+            },
+            {
+              id: 'node3',
+              x: 300,
+              y: 300,
+            },
+          ],
+          edges: [
+            {
+              id: 'edge1',
+              target: 'node2',
+              source: 'node1',
+            },
+          ],
+        };
+
+        const container = document.getElementById('container');
+
+
+        const width = container.scrollWidth;
+        const height = (container.scrollHeight || 500) - 30;
+        console.log(width + " " + container.scrollHeight);
+        const graph = new G6.Graph({
+          container: 'container',
+          width,
+          height,
+          // The sets of behavior modes
+          modes: {
+            // Defualt mode
+            move: ['drag-node', 'click-select'],
+            // Adding node mode
+            addNode: ['click-add-node', 'click-select'],
+            // Adding edge mode
+            addEdge: ['click-add-edge', 'click-select'],
+          },
+          // The node styles in different states
+          nodeStateStyles: {
+            // The node styles in selected state
+            selected: {
+              stroke: '#666',
+              lineWidth: 2,
+              fill: 'steelblue',
+            },
+          },
+        });
+        graph.data(data);
+        graph.render();
+
+        // Add a selector to DOM
+        const newNode = document.getElementById('NewNode');
+        newNode.onclick = function(){graph.setMode("addNode");}
+        const newEdge = document.getElementById('NewEdge');
+        newEdge.onclick = function(){graph.setMode("addEdge");}
+        const move = document.getElementById('Move');
+        move.onclick = function(){graph.setMode("move");}
+
+        // Listen to the selector, change the mode when the selector is changed
+        /*selector.addEventListener('change', (e) => {
+          const value = e.target.value;
+          // change the behavior mode
+          graph.setMode(value);
+        });*/
+
+        if (typeof window !== 'undefined')
+          window.onresize = () => {
+            if (!graph || graph.get('destroyed')) return;
+            if (!container || !container.scrollWidth || !container.scrollHeight) return;
+            graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+          };
+      }

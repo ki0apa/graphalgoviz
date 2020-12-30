@@ -1,5 +1,7 @@
 window.onload = function(){
-          let addedCount = 0;
+          let nextID = 1;
+          let nextLabel = 1;
+          let labelToID = new Map();
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior
@@ -15,13 +17,18 @@ window.onload = function(){
             const graph = self.graph;
             // Add a new node
             graph.addItem('node', {
+              size: 60,
               x: ev.canvasX,
               y: ev.canvasY,
-              id: `node-${addedCount}`, // Generate the unique id
+              id: `${nextID}`, // Generate the unique id
+              label: nextLabel
             });
-            addedCount++;
+            labelToID[nextLabel] = nextID;
+            nextID++;
+            nextLabel++;
           },
         });
+        // Register a custom behavior: click two end nodes to add an edge
         // Register a custom behavior: click two end nodes to add an edge
         G6.registerBehavior('click-add-edge', {
           // Set the events and the corresponding responsing function for this behavior
@@ -79,40 +86,47 @@ window.onload = function(){
             }
           },
         });
-        // Initial data
-        const data = {
-          nodes: [
-            {
-              id: 'node1',
-              x: 300,
-              y: 200,
-            },
-            {
-              id: 'node2',
-              x: 300,
-              y: 200,
-            },
-            {
-              id: 'node3',
-              x: 300,
-              y: 300,
-            },
-          ],
-          edges: [
-            {
-              id: 'edge1',
-              target: 'node2',
-              source: 'node1',
-            },
-          ],
-        };
+
+        G6.registerBehavior('click-delete', {
+          // Set the events and the corresponding responsing function for this behavior
+          getEvents() {
+            return {
+              'node:click': 'onNodeClick', // The event is canvas:click, the responsing function is onClick
+              'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
+            };
+          },
+          // The responsing function for node:click defined in getEvents
+          onNodeClick(ev) {
+            const self = this;
+            const node = ev.item;
+            const graph = self.graph;
+            // The position where the mouse clicks
+            var label = node.getModel().label;
+            graph.removeItem(node);
+            for(var i = label+1; i < nextLabel; i++){
+                var nextNode = graph.findById(labelToID[i]);
+                graph.updateItem(nextNode, {
+                  label: i-1
+                });
+                labelToID[i-1] = labelToID[i]
+                labelToID[i] = -1 
+            }
+            nextLabel--;
+          },
+          onEdgeClick(ev){
+            const self = this;
+            const edge = ev.item;
+            const graph = self.graph;
+            // The position where the mouse clicks
+            graph.removeItem(edge);
+          }
+        });
 
         const container = document.getElementById('container');
 
 
         const width = container.scrollWidth;
         const height = (container.scrollHeight || 500) - 30;
-        console.log(width + " " + container.scrollHeight);
         const graph = new G6.Graph({
           container: 'container',
           width,
@@ -125,6 +139,7 @@ window.onload = function(){
             addNode: ['click-add-node', 'click-select'],
             // Adding edge mode
             addEdge: ['click-add-edge', 'click-select'],
+            trash: ['click-delete', 'click-select']
           },
           // The node styles in different states
           nodeStateStyles: {
@@ -135,17 +150,36 @@ window.onload = function(){
               fill: 'steelblue',
             },
           },
+          defaultEdge: {
+            style: {
+              lineWidth: 10
+            }
+          }
         });
-        graph.data(data);
         graph.render();
+
+        var cur;
+
+        var selectorOnClick = function(type, obj){
+          return function(){
+            graph.setMode(type);
+            cur.classList.remove("selected");
+            obj.classList.add("selected");
+            cur = obj;
+          }
+        }
 
         // Add a selector to DOM
         const newNode = document.getElementById('NewNode');
-        newNode.onclick = function(){graph.setMode("addNode");}
+        newNode.onclick = selectorOnClick("addNode", newNode);
         const newEdge = document.getElementById('NewEdge');
-        newEdge.onclick = function(){graph.setMode("addEdge");}
+        newEdge.onclick = selectorOnClick("addEdge", newEdge);
         const move = document.getElementById('Move');
-        move.onclick = function(){graph.setMode("move");}
+        move.onclick = selectorOnClick("move", move);
+        const trash = document.getElementById('Trash');
+        trash.onclick = selectorOnClick("trash", trash);
+        graph.setMode("addNode");
+        cur = newNode;
 
         // Listen to the selector, change the mode when the selector is changed
         /*selector.addEventListener('change', (e) => {

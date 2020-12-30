@@ -73,8 +73,8 @@
 			position: absolute;
 			background: #e6e3e3;   
 			width: 60px;
-			height: 180px; 
-  			transform: translate(0, 125%);
+			height: 240px; 
+  			transform: translate(0, 100%);
 			left: 0;
 			top: 0;
 		}
@@ -83,6 +83,10 @@
 			position: absolute;
 			height: 93%;
 			width: 100%;
+		}
+
+		.selected{
+			background-color: gray;
 		}
 
 	</style>
@@ -117,9 +121,10 @@
 	<div id="container"></div>
 	
 	<div id="toolbar-left">
-		<img src="imgs/Node.png" width="60px" id="NewNode"></img>
+		<img src="imgs/Node.png" width="60px" id="NewNode" class="selected"></img>
 		<img src="imgs/edge.png" width="60px" id="NewEdge"></img>
 		<img src="imgs/move.png" width="60px" id="Move"></img>
+		<img src="imgs/trash.png" width="60px" id="Trash"></img>
 	</div>
 
     

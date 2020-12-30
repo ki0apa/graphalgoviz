@@ -80,8 +80,8 @@
 		}
 
 	</style>
-	<script type="text/javascript" src="graph-algos.js"></script>
-	<script type="text/javascript" src="graph-render.js"></script>
+	<!-- <script type="text/javascript" src="graph-algos.js"></script> -->
+
 </head>
 <body>
 	<header>
@@ -108,6 +108,61 @@
 		<img src="imgs/Node.png" width="60px"></img>
 		<img src="imgs/edge.png" width="60px"></img>
 		<img src="imgs/move.png" width="60px"></img>
+	</div>
+	<div id="container">
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.7.1/dist/g6.min.js"></script>
+    <script>
+		const data = {
+		nodes: [
+			{ id: 'node1', x: 350, y: 200 },
+			{ id: 'node2', x: 350, y: 250 },
+			{ id: 'node3', x: 100, y: 200 },
+			{ id: 'node3', x: 100, y: 230 }
+		],
+		};
+		const descriptionDiv = document.createElement('div');
+		descriptionDiv.innerHTML =
+		'Click the source and target node to create a new edge.';
+		const container = document.getElementById('container');
+		container.appendChild(descriptionDiv);
+
+		const width = 1000;
+		const height = 1000;
+		const graph = new G6.Graph({
+		container: 'container',
+		width,
+		height,
+		linkCenter: true,
+		modes: {
+			default: ['create-edge'],
+		},
+		defaultEdge: {
+			type: 'quadratic',
+			style: {
+			stroke: '#F6BD16',
+			lineWidth: 2
+			},
+		}
+		});
+
+		graph.data(data);
+		graph.render();
+
+		graph.on('aftercreateedge', e => {
+		const edges = graph.save().edges;
+		G6.Util.processParallelEdges(edges);
+		graph.getEdges().forEach((edge, i) => {
+			graph.updateItem(edge, edges[i])
+		})
+		})
+
+		if (typeof window !== 'undefined')
+		window.onresize = () => {
+			if (!graph || graph.get('destroyed')) return;
+			if (!container || !container.scrollWidth || !container.scrollHeight) return;
+			graph.changeSize(container.scrollWidth, container.scrollHeight - 20);
+		};
+	</script>
 	</div>
 </body>
 </html>

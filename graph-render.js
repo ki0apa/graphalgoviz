@@ -1,33 +1,64 @@
 
 var graph;
+let nextID = 1;
+let nextLabel = 1;
+let labelToID = new Map();
 
-function directedgraph() {
+function clearGraph(){
   graph.clear();
-  
-graph.set('defaultEdge',{
-      style: {
-        lineWidth: 10,
-        endArrow:true
-      }
-    }
-);
+  nextLabel = 1;
 }
 
-function undirectedgraph(){
-  graph.clear();
+function newDirectedGraph() {
+  clearGraph();
+  
   graph.set('defaultEdge',{
       style: {
         lineWidth: 10,
+        endArrow:{
+          path: G6.Arrow.triangle(10, 15, 10),
+          d: 10,
+        }
+      }
+    }
+  );
+}
+
+function newUndirectedGraph(){
+  clearGraph();
+  graph.set('defaultEdge',{
+      style: {
         endArrow:false
       }
-  }
-);
+    }
+  );
+}
+
+function newWeightedGraph(){
+
+}
+
+function newUnweightedGraph(){
+
+}
+
+function algoDijkstra(){
+
+}
+
+function algoBfs(){
+
+}
+
+function algoDfs(){
+
+}
+
+function algoTopSort(){
+
 }
 
 window.onload = function(){
-          let nextID = 1;
-          let nextLabel = 1;
-          let labelToID = new Map();
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior
@@ -179,37 +210,65 @@ window.onload = function(){
           defaultEdge: {
             style: {
               lineWidth: 10,
-              endArrow:true
+              endarrow: false
             }
           }
         });
         graph.render();
 
-        var cur;
+        var curSelectedLeft;
 
-        var selectorOnClick = function(type, obj){
+        var leftSelectorOnClick = function(type, obj){
           return function(){
             graph.setMode(type);
-            cur.classList.remove("selected");
-            obj.classList.add("selected");
-            cur = obj;
+            curSelectedLeft.classList.remove("selected-left");
+            obj.classList.add("selected-left");
+            curSelectedLeft = obj;
           }
         }
 
-        // Add a selector to DOM
         const newNode = document.getElementById('NewNode');
-        newNode.onclick = selectorOnClick("addNode", newNode);
+        newNode.onclick = leftSelectorOnClick("addNode", newNode);
         const newEdge = document.getElementById('NewEdge');
-        newEdge.onclick = selectorOnClick("addEdge", newEdge);
+        newEdge.onclick = leftSelectorOnClick("addEdge", newEdge);
         const move = document.getElementById('Move');
-        move.onclick = selectorOnClick("move", move);
+        move.onclick = leftSelectorOnClick("move", move);
         const trash = document.getElementById('Trash');
-        trash.onclick = selectorOnClick("trash", trash);
+        trash.onclick = leftSelectorOnClick("trash", trash);
         graph.setMode("addNode");
-        cur = newNode;
+        curSelectedLeft = newNode;
 
-        
 
+        var curSelectedTop = new Map();
+        var topSelectorOnClickType = function(func, type, obj){
+            return function(){
+              console.log(obj);
+              func();
+              curSelectedTop[type].classList.remove("selected-top");
+              obj.classList.add("selected-top");
+              curSelectedTop[type] = obj;
+            }
+        }
+
+        const directed = document.getElementById('directed');
+        directed.onclick = topSelectorOnClickType(newDirectedGraph, "direction", directed);
+        const undirected = document.getElementById('undirected');
+        undirected.onclick = topSelectorOnClickType(newUndirectedGraph, "direction", undirected);
+        const weighted = document.getElementById('weighted');
+        weighted.onclick = topSelectorOnClickType(newWeightedGraph, "weight", weighted);
+        const unweighted = document.getElementById('unweighted');
+        unweighted.onclick = topSelectorOnClickType(newUnweightedGraph, "weight", unweighted);
+        const dijkstra = document.getElementById('dijkstra');
+        dijkstra.onclick = topSelectorOnClickType(algoDijkstra, "algo", dijkstra);
+        const bfs = document.getElementById('bfs');
+        bfs.onclick = topSelectorOnClickType(algoBfs, "algo", bfs);
+        const dfs = document.getElementById('dfs');
+        dfs.onclick = topSelectorOnClickType(algoDfs, "algo", dfs);
+        const topsort = document.getElementById('topsort');
+        topsort.onclick = topSelectorOnClickType(algoTopSort, "algo", topsort);
+        curSelectedTop["direction"] = undirected;
+        curSelectedTop["weight"] = unweighted;
+        curSelectedTop["algo"] = dijkstra;
 
         
 

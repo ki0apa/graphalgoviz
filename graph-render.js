@@ -1,3 +1,29 @@
+
+var graph;
+
+function directedgraph() {
+  graph.clear();
+  
+graph.set('defaultEdge',{
+      style: {
+        lineWidth: 10,
+        endArrow:true
+      }
+    }
+);
+}
+
+function undirectedgraph(){
+  graph.clear();
+  graph.set('defaultEdge',{
+      style: {
+        lineWidth: 10,
+        endArrow:false
+      }
+  }
+);
+}
+
 window.onload = function(){
           let nextID = 1;
           let nextLabel = 1;
@@ -127,7 +153,7 @@ window.onload = function(){
 
         const width = container.scrollWidth;
         const height = (container.scrollHeight || 500) - 30;
-        const graph = new G6.Graph({
+        graph = new G6.Graph({
           container: 'container',
           width,
           height,
@@ -152,7 +178,8 @@ window.onload = function(){
           },
           defaultEdge: {
             style: {
-              lineWidth: 10
+              lineWidth: 10,
+              endArrow:true
             }
           }
         });
@@ -181,6 +208,11 @@ window.onload = function(){
         graph.setMode("addNode");
         cur = newNode;
 
+        
+
+
+        
+
         // Listen to the selector, change the mode when the selector is changed
         /*selector.addEventListener('change', (e) => {
           const value = e.target.value;
@@ -194,4 +226,7 @@ window.onload = function(){
             if (!container || !container.scrollWidth || !container.scrollHeight) return;
             graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
           };
+
       }
+
+

@@ -73,7 +73,7 @@
 			position: absolute;
 			background: #e6e3e3;   
 			width: 60px;
-			height: 240px; 
+			height: 300px; 
   			transform: translate(0, 100%);
 			left: 0;
 			top: 0;
@@ -101,8 +101,12 @@
 		<div id="title" style="margin-left:0;">
 			<p><b>Graph Algorithm Visualizer</b></p>
 		</div>
-		<div class="toolbar-div">
-				<button>New Graph</button>
+		<div class="dropdown toolbar-div">
+			<button class="dropbtn">New Graph &#9662;</button>
+			<div class="dropdown-content">
+				<button onclick="directedgraph();" id="directed">Directed</button>
+				<button onclick="undirectedgraph();" id="undirected">Undirected</button>
+			</div>
 		</div>
 		<div class="dropdown toolbar-div">
 			<button class="dropbtn">Choose Algorithm &#9662;</button>

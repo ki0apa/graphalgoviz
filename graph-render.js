@@ -1,18 +1,22 @@
 
-var graph;
-let nextID = 1;
-let nextLabel = 1;
-let labelToID = new Map();
+var vgraph;
+var nextID = 1;
+var nextLabel = 1;
+var labelToID = new Map();
+var algotype;
+var directed = false;
+var weighted = false;
 
 function clearGraph(){
-  graph.clear();
+  vgraph.clear();
   nextLabel = 1;
 }
 
 function newDirectedGraph() {
+  directed = true;
   clearGraph();
   
-  graph.set('defaultEdge',{
+  vgraph.set('defaultEdge',{
       style: {
         lineWidth: 10,
         endArrow:{
@@ -25,9 +29,12 @@ function newDirectedGraph() {
 }
 
 function newUndirectedGraph(){
+  directed = false;
   clearGraph();
-  graph.set('defaultEdge',{
+
+  vgraph.set('defaultEdge',{
       style: {
+        lineWidth: 10,
         endArrow:false
       }
     }
@@ -39,22 +46,6 @@ function newWeightedGraph(){
 }
 
 function newUnweightedGraph(){
-
-}
-
-function algoDijkstra(){
-
-}
-
-function algoBfs(){
-
-}
-
-function algoDfs(){
-
-}
-
-function algoTopSort(){
 
 }
 
@@ -71,9 +62,8 @@ window.onload = function(){
           // Click event
           onClick(ev) {
             const self = this;
-            const graph = self.graph;
             // Add a new node
-            graph.addItem('node', {
+            vgraph.addItem('node', {
               size: 60,
               x: ev.canvasX,
               y: ev.canvasY,
@@ -100,12 +90,11 @@ window.onload = function(){
           onClick(ev) {
             const self = this;
             const node = ev.item;
-            const graph = self.graph;
             // The position where the mouse clicks
             const point = { x: ev.x, y: ev.y };
             const model = node.getModel();
             if (self.addingEdge && self.edge) {
-              graph.updateItem(self.edge, {
+              vgraph.updateItem(self.edge, {
                 target: model.id,
               });
 
@@ -113,7 +102,7 @@ window.onload = function(){
               self.addingEdge = false;
             } else {
               // Add anew edge, the end node is the current node user clicks
-              self.edge = graph.addItem('edge', {
+              self.edge = vgraph.addItem('edge', {
                 source: model.id,
                 target: model.id,
               });
@@ -127,7 +116,7 @@ window.onload = function(){
             const point = { x: ev.x, y: ev.y };
             if (self.addingEdge && self.edge) {
               // Update the end node to the current node the mouse clicks
-              self.graph.updateItem(self.edge, {
+              vgraph.updateItem(self.edge, {
                 target: point,
               });
             }
@@ -137,7 +126,7 @@ window.onload = function(){
             const self = this;
             const currentEdge = ev.item;
             if (self.addingEdge && self.edge === currentEdge) {
-              self.graph.removeItem(self.edge);
+              vgraph.removeItem(self.edge);
               self.edge = null;
               self.addingEdge = false;
             }
@@ -156,13 +145,12 @@ window.onload = function(){
           onNodeClick(ev) {
             const self = this;
             const node = ev.item;
-            const graph = self.graph;
             // The position where the mouse clicks
             var label = node.getModel().label;
-            graph.removeItem(node);
+            vgraph.removeItem(node);
             for(var i = label+1; i < nextLabel; i++){
-                var nextNode = graph.findById(labelToID[i]);
-                graph.updateItem(nextNode, {
+                var nextNode = vgraph.findById(labelToID[i]);
+                vgraph.updateItem(nextNode, {
                   label: i-1
                 });
                 labelToID[i-1] = labelToID[i]
@@ -175,7 +163,7 @@ window.onload = function(){
             const edge = ev.item;
             const graph = self.graph;
             // The position where the mouse clicks
-            graph.removeItem(edge);
+            vgraph.removeItem(edge);
           }
         });
 
@@ -184,7 +172,7 @@ window.onload = function(){
 
         const width = container.scrollWidth;
         const height = (container.scrollHeight || 500) - 30;
-        graph = new G6.Graph({
+        vgraph = new G6.Graph({
           container: 'container',
           width,
           height,
@@ -198,15 +186,6 @@ window.onload = function(){
             addEdge: ['click-add-edge', 'click-select'],
             trash: ['click-delete', 'click-select']
           },
-          // The node styles in different states
-          nodeStateStyles: {
-            // The node styles in selected state
-            selected: {
-              stroke: '#666',
-              lineWidth: 2,
-              fill: 'steelblue',
-            },
-          },
           defaultEdge: {
             style: {
               lineWidth: 10,
@@ -214,13 +193,13 @@ window.onload = function(){
             }
           }
         });
-        graph.render();
+        vgraph.render();
 
         var curSelectedLeft;
 
         var leftSelectorOnClick = function(type, obj){
           return function(){
-            graph.setMode(type);
+            vgraph.setMode(type);
             curSelectedLeft.classList.remove("selected-left");
             obj.classList.add("selected-left");
             curSelectedLeft = obj;
@@ -235,7 +214,7 @@ window.onload = function(){
         move.onclick = leftSelectorOnClick("move", move);
         const trash = document.getElementById('Trash');
         trash.onclick = leftSelectorOnClick("trash", trash);
-        graph.setMode("addNode");
+        vgraph.setMode("addNode");
         curSelectedLeft = newNode;
 
 
@@ -259,16 +238,20 @@ window.onload = function(){
         const unweighted = document.getElementById('unweighted');
         unweighted.onclick = topSelectorOnClickType(newUnweightedGraph, "weight", unweighted);
         const dijkstra = document.getElementById('dijkstra');
-        dijkstra.onclick = topSelectorOnClickType(algoDijkstra, "algo", dijkstra);
+        dijkstra.onclick = topSelectorOnClickType(function(){algotype = algodijkstra}, "algo",  dijkstra);
         const bfs = document.getElementById('bfs');
-        bfs.onclick = topSelectorOnClickType(algoBfs, "algo", bfs);
+        bfs.onclick = topSelectorOnClickType(function(){algotype = algobfs}, "algo", bfs);
         const dfs = document.getElementById('dfs');
-        dfs.onclick = topSelectorOnClickType(algoDfs, "algo", dfs);
+        dfs.onclick = topSelectorOnClickType(function(){algotype = algodfs}, "algo", dfs);
         const topsort = document.getElementById('topsort');
-        topsort.onclick = topSelectorOnClickType(algoTopSort, "algo", topsort);
+        topsort.onclick = topSelectorOnClickType(function(){algotype = algotopsort}, "algo", topsort);
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
         curSelectedTop["algo"] = dijkstra;
+        algotype = algobfs;
+
+        const run = document.getElementById("runbtn");
+        run.onclick = function(){ convertGraph(); algotype();};
 
         
 
@@ -281,9 +264,9 @@ window.onload = function(){
 
         if (typeof window !== 'undefined')
           window.onresize = () => {
-            if (!graph || graph.get('destroyed')) return;
+            if (!vgraph || vgraph.get('destroyed')) return;
             if (!container || !container.scrollWidth || !container.scrollHeight) return;
-            graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+            vgraph.changeSize(container.scrollWidth, container.scrollHeight - 30);
           };
 
       }

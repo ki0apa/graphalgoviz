@@ -1,5 +1,5 @@
 //number of nodes in the graph
-var n = 5;
+var n;
 
 //Test graph for Dijstra's
 //var graph = [[[1, 3], [2, 1]], [[0, 3], [2, 1], [3, 2]], [[0, 1], [1, 1]], [[1, 2], [4, 6]], [[3, 6]]];
@@ -7,21 +7,66 @@ var n = 5;
 //Test graph for top sort
 //var graph = [[], [[0, 1], [2, 1]], [[4, 1]], [[2, 1]], []];
 
+var graph;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function convertGraph(){
+	var graphinfo = vgraph.save();
+	graph = new Array(nextID);
+	n = nextID;
+	for(var i = 0; i < nextID; i++){
+		graph[i] = []
+	}
+	for(var i = 0; i < graphinfo["edges"].length; i++){
+		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), 0]);
+		if(!directed){
+			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), 0]);
+		}
+	}
+	console.log(graph);
+}
+
+function visitNode(id){
+	var node = vgraph.findById(id);
+	vgraph.updateItem(node, {
+		style:{
+			fill: "#00ff00"
+		}
+	})
+}
+
+function exitNode(id){
+	var node = vgraph.findById(id);
+	vgraph.updateItem(node, {
+		style:{
+			fill: "#ff0000"
+		}
+	})
+}
+
 //breadth first search starting at node s
-function BFS(s){
+async function algobfs(){
+	console.log(graph);
+	var s = 1;
 	var q = [s];
 	var visited = [];
 	for(var i = 0; i < n; i++){
 		visited.push(false);
 	}
 	visited[s] = true;
+	visitNode(s);
 	while(q.length > 0){
+		await sleep(1000);
 		var cur = q[0];
-		console.log(q);
+		exitNode(cur);
 		q.shift();
 		for(var edge in graph[cur]){
 			var node = graph[cur][edge];
 			if(!visited[node[0]]){
+				visitNode(node[0]);
 				visited[node[0]] = true;
 				q.push(node[0]);
 			}
@@ -30,26 +75,26 @@ function BFS(s){
 }
 
 //depth first search starting at node s
-function DFS_recursive(s){
+function dfs_recursive(s){
 	dfsVisited[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
 		if(!dfsVisited[node[0]])
-			DFS_recursive(node[0]);
+			dfs_recursive(node[0]);
 	}
 }
 
 var dfsVisited = []
-function DFS(s){
+function algodfs(s){
 	dfsVisited = Array(n);
 	for(var i = 0; i < n; i++) dfsVisited[i] = false;
-	DFS_recursive(s);
+	dfs_recursive(s);
 }
 
 //dijkstra's starting at node s
 var inf = 1e9;
 
-function dijkstra(s){
+function algodijkstra(s){
 	var dist = [];
 	var prev = [];
 	var visited = []
@@ -82,25 +127,23 @@ function dijkstra(s){
 //topological sort
 var topSortResult = [];
 var topSortVisited = []
-function DFSTopSort(s){
+function dfsTopSort(s){
 	if(topSortVisited[s]) return;
 	topSortVisited[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
 		if(!topSortVisited[node[0]])
-			DFSTopSort(node[0]);
+			dfsTopSort(node[0]);
 	}
 	topSortResult.unshift(s);
 }
 
-topologicalSort();
-
-function topologicalSort(){
+function algotopsort(){
 	topSortResult = [];
 	topSortVisited = Array(n);
 	for(var i = 0; i < n; i++){
 		topSortVisited[i] = false;
 	}
-	for(var i = 0; i < n; i++) DFSTopSort(i);
+	for(var i = 0; i < n; i++) dfsTopSort(i);
 	console.log(topSortResult);
 }

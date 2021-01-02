@@ -113,6 +113,17 @@
 
 </head>
 <body>
+	<div>
+		<form onsubmit="randomizeGraph()" id="randomgraph">
+		  <label for="nodenum">Number of Nodes</label>
+		  <input type="text" id="nodenum" name="nodecount" placeholder="Number of nodes..">
+	  
+		  <label for="edgenum">Number of Edges</label>
+		  <input type="text" id="edgenum" name="edgecount" placeholder="Number of edges..">
+		
+		  <input id= "submit" type="submit" value="Generate Random Graph">
+		</form>
+	  </div>
 	<header>
 		<div id="title" style="margin-left:0;">
 			<p><b>Graph Algorithm Visualizer</b></p>
@@ -160,6 +171,13 @@
 		<img src="imgs/move.png" width="60px" id="Move"></img>
 		<img src="imgs/trash.png" width="60px" id="Trash"></img>
 	</div>
+
+
+
+	  
+
+
+
 
     
 </body>

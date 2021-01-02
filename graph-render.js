@@ -7,6 +7,37 @@ var algotype;
 var directed = false;
 var weighted = false;
 
+
+
+
+
+function randomizeGraph(){
+  var nodenum = document.querySelector('#nodenum').value;
+  var edgenum = document.querySelector('#edgenum').value;
+
+  var i;
+  var nodearray;
+  for (i = 0; i < nodenum; i++) {
+    console.log('run');
+    vgraph.addItem('node', {
+      size: 60,
+      x: Math.floor(Math.random() * (1200 - 100 + 1) + 100),
+      y: Math.floor(Math.random() * (500 - 40 + 1) + 40),
+      id: i, // Generate the unique id
+      label: nextLabel
+    });
+    labelToID[nextLabel] = nextID;
+    nextID++;
+    nextLabel++;
+  }
+  var n = 0;
+  var s;
+  var d;
+}
+
+// x: 100 to 1200
+// y: 40 to 500
+
 function clearGraph(){
   vgraph.clear();
   nextLabel = 1;
@@ -50,6 +81,11 @@ function newUnweightedGraph(){
 }
 
 window.onload = function(){
+        var form = document.getElementById("randomgraph");
+        function handleForm(event) { 
+          event.preventDefault(); 
+        } 
+        form.addEventListener('submit', handleForm);
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior

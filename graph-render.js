@@ -12,27 +12,37 @@ var weighted = false;
 
 
 function randomizeGraph(){
-  var nodenum = document.querySelector('#nodenum').value;
-  var edgenum = document.querySelector('#edgenum').value;
+  var nodenum = parseInt(document.querySelector('#nodenum').value);
+  var edgenum = parseInt(document.querySelector('#edgenum').value);
+  
 
   var i;
-  var nodearray;
+  var data = {nodes:[], edges:[]};
   for (i = 0; i < nodenum; i++) {
-    console.log('run');
-    vgraph.addItem('node', {
-      size: 60,
+    data.nodes.push({
+      id: i.toString(),
       x: Math.floor(Math.random() * (1200 - 100 + 1) + 100),
-      y: Math.floor(Math.random() * (500 - 40 + 1) + 40),
-      id: i, // Generate the unique id
-      label: nextLabel
-    });
-    labelToID[nextLabel] = nextID;
-    nextID++;
-    nextLabel++;
+      y: Math.floor(Math.random() * (500 - 40 + 1) + 40) 
+    })
   }
-  var n = 0;
   var s;
   var d;
+  for (i = 0; i < edgenum; i++){
+    do{
+      s = Math.floor(Math.random() * (nodenum) + 0).toString();
+      d = Math.floor(Math.random() * (nodenum) + 0).toString();
+      var edgeinfo = {
+        source: s,
+        target: d
+      } 
+      console.log(edgeinfo);
+    } while (s == d && (data.edges.includes(edgeinfo) == false));
+    data.edges.push(edgeinfo);
+  }
+  console.log(data);
+  vgraph.data(data);
+  vgraph.render();
+
 }
 
 // x: 100 to 1200

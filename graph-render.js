@@ -7,30 +7,35 @@ var algotype;
 var directed = false;
 var weighted = false;
 
-
-
-
+function clearGraph(){
+  vgraph.clear();
+  nextLabel = 1;
+  nextID = 1;
+}
 
 function randomizeGraph(){
+  clearGraph();
   var nodenum = parseInt(document.querySelector('#nodenum').value);
   var edgenum = parseInt(document.querySelector('#edgenum').value);
   
 
   var i;
   var data = {nodes:[], edges:[]};
-  for (i = 0; i < nodenum; i++) {
+  for (i = 1; i <= nodenum; i++) {
     data.nodes.push({
       id: i.toString(),
+      label: i.toString(),
       x: Math.floor(Math.random() * (1200 - 100 + 1) + 100),
-      y: Math.floor(Math.random() * (500 - 40 + 1) + 40) 
+      y: Math.floor(Math.random() * (500 - 40 + 1) + 40),
+      size: 60
     })
   }
   var s;
   var d;
   for (i = 0; i < edgenum; i++){
     do{
-      s = Math.floor(Math.random() * (nodenum) + 0).toString();
-      d = Math.floor(Math.random() * (nodenum) + 0).toString();
+      s = Math.floor(Math.random() * (nodenum) + 1).toString();
+      d = Math.floor(Math.random() * (nodenum) + 1).toString();
       var edgeinfo = {
         source: s,
         target: d
@@ -39,6 +44,8 @@ function randomizeGraph(){
     } while (s == d && (data.edges.includes(edgeinfo) == false));
     data.edges.push(edgeinfo);
   }
+  nextID = nodenum+1;
+  nextLabel = nodenum+1;
   console.log(data);
   vgraph.data(data);
   vgraph.render();
@@ -47,11 +54,6 @@ function randomizeGraph(){
 
 // x: 100 to 1200
 // y: 40 to 500
-
-function clearGraph(){
-  vgraph.clear();
-  nextLabel = 1;
-}
 
 function newDirectedGraph() {
   directed = true;

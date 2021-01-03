@@ -38,15 +38,16 @@ function randomizeGraph(){
       d = Math.floor(Math.random() * (nodenum) + 1).toString();
       var edgeinfo = {
         source: s,
-        target: d
+        target: d,
+        weight: 0,
+        label: 'Weight: 0',
+        curveOffset: 0,
       } 
-      console.log(edgeinfo);
     } while (s == d && (data.edges.includes(edgeinfo) == false));
     data.edges.push(edgeinfo);
   }
   nextID = nodenum+1;
   nextLabel = nodenum+1;
-  console.log(data);
   vgraph.data(data);
   vgraph.render();
 
@@ -153,7 +154,11 @@ window.onload = function(){
               self.edge = vgraph.addItem('edge', {
                 source: model.id,
                 target: model.id,
+                label: "Weight: 0"
               });
+              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
+              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg);
               self.addingEdge = true;
             }
           },
@@ -173,6 +178,7 @@ window.onload = function(){
           onEdgeClick(ev) {
             const self = this;
             const currentEdge = ev.item;
+            
             if (self.addingEdge && self.edge === currentEdge) {
               vgraph.removeItem(self.edge);
               self.edge = null;

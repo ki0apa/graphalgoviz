@@ -7,6 +7,17 @@ var algotype;
 var directed = false;
 var weighted = false;
 
+
+
+function weightUpdate(){
+  vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = parseInt(document.querySelector('#newweight').value);
+  vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+  console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label);
+  console.log(vgraph.cfg.edges);
+
+}
+
+
 function clearGraph(){
   vgraph.clear();
   nextLabel = 1;
@@ -94,6 +105,14 @@ function newUnweightedGraph(){
 }
 
 window.onload = function(){
+
+
+        var forma = document.getElementById("weightform");
+        function handleForm(event) { 
+          event.preventDefault(); 
+        } 
+        forma.addEventListener('submit', handleForm);
+
         var form = document.getElementById("randomgraph");
         function handleForm(event) { 
           event.preventDefault(); 
@@ -150,15 +169,17 @@ window.onload = function(){
               self.edge = null;
               self.addingEdge = false;
             } else {
+              document.querySelector('.weightform').style.display = 'flex';
+
               // Add anew edge, the end node is the current node user clicks
               self.edge = vgraph.addItem('edge', {
                 source: model.id,
                 target: model.id,
                 label: "Weight: 0"
               });
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
+
+              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 1;
               vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
-              console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg);
               self.addingEdge = true;
             }
           },

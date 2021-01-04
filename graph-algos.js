@@ -8,6 +8,7 @@ var n;
 //var graph = [[], [[0, 1], [2, 1]], [[4, 1]], [[2, 1]], []];
 
 var graph;
+var edges = [];
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -20,13 +21,15 @@ function convertGraph(){
 	for(var i = 0; i < nextID; i++){
 		graph[i] = []
 	}
+	console.log(graphinfo["nodes"]);
+	edges = graphinfo["edges"];
 	for(var i = 0; i < graphinfo["edges"].length; i++){
 		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), 0]);
 		if(!directed){
 			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), 0]);
 		}
 	}
-	console.log(graph);
+	console.log(edges);
 }
 
 function visitNode(id){
@@ -197,3 +200,91 @@ async function algotopsort(){
 	}
 	for(var i = 0; i < n; i++) if(!topSortVisited[i]) await dfsTopSort(i, true);
 }
+
+var parent;
+function find(a){if(parent[a] == a) return a; return parent[a] = find(parent[a]);}
+
+function useEdge(edge1){
+	edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#ff0000"
+		}
+	})
+}
+
+//minimum spanning tree
+async function algomst(){
+	parent = Array(edges.length);
+	for(var i = 0; i < edges.length; i++){
+		parent[i] = i;
+	}
+	for(var i = 0; i < edges.length	; i++){
+		console.log(parent);
+		if(find(edges[i].source) != find(edges[i].target)){
+			useEdge(edges[i]);
+			parent[find(edges[i].source)] = find(edges[i].target);
+		}
+	}
+}
+
+//strongly connected components
+
+var stackSCC;
+var visitedSCC;
+
+async function dfsSCC(s){
+	console.log(s);
+	visitedSCC[s] = true;
+	for(var edge in graph[s]){
+		var node = graph[s][edge];
+		if(!visitedSCC[node[0]])
+			dfsSCC(node[0]);
+	}
+	console.log(s);
+	stackSCC.push(s);
+}
+
+async function algoscc(){
+	stackSCC = [];
+	visitedSCC = Array(n);
+	for(var i = 1; i < n; i++) visitedSCC[i] = false;
+	for(var i = 1; i < n; i++) if(!visitedSCC[i]) dfsSCC(i);
+	var ngraph = Array(n);
+	for(var i= 1; i < n; i++) ngraph[i] = [];
+	for(var i = 1; i < n; i++){
+		for(var j = 0; j < graph[i].length; j++){
+			ngraph[graph[i][j][0]].push([i, graph[i][j][1]]);
+		}
+	}
+	graph = ngraph;
+	console.log(graph);
+	visitedSCC = Array(n);
+	for(var i = 1; i < n; i++) visitedSCC[i] = false;
+	lastStack = stackSCC;
+	var idCombo = 1;
+	for(var i = n-2; i >= 0; i--){
+		stackSCC = [];
+		if(!visitedSCC[lastStack[i]]){
+			dfsSCC(lastStack[i]);
+			combo = {id: "combo" + idCombo.toString(), nodes:[]};
+			for(var j = 0; j < stackSCC.length; j++){
+				combo.nodes.push({id: stackSCC[j].toString()});
+				var node = vgraph.findById(stackSCC[j]);
+				vgraph.updateItem(node, {
+					comboId: "combo" + idCombo.toString()
+				});
+			}
+			idCombo++;
+			console.log(combo);
+			vgraph.addItem('combo', combo);
+			console.log(vgraph.save());
+			console.log(stackSCC);
+		}
+	}
+	vgraph.data(vgraph.save());
+	vgraph.render();
+}
+
+//Maximum flow
+//bipartite matching

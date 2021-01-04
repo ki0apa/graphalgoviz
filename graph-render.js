@@ -239,6 +239,12 @@ window.onload = function(){
               lineWidth: 10,
               endarrow: false
             }
+          },
+          defaultCombo: {
+            type: 'circle',
+            labelCfg: {
+              position: 'top',
+            }
           }
         });
         vgraph.render();
@@ -293,6 +299,10 @@ window.onload = function(){
         dfs.onclick = topSelectorOnClickType(function(){algotype = algodfs}, "algo", dfs);
         const topsort = document.getElementById('topsort');
         topsort.onclick = topSelectorOnClickType(function(){algotype = algotopsort}, "algo", topsort);
+        const mst = document.getElementById('mst');
+        mst.onclick = topSelectorOnClickType(function(){algotype = algomst}, "algo", mst);
+        const scc = document.getElementById('scc');
+        scc.onclick = topSelectorOnClickType(function(){algotype = algoscc}, "algo", scc);
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
         curSelectedTop["algo"] = dijkstra;

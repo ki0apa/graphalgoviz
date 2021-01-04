@@ -6,14 +6,22 @@ var labelToID = new Map();
 var algotype;
 var directed = false;
 var weighted = false;
-
+var currdata;
 
 
 function weightUpdate(){
   vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
-  console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label);
-  console.log(vgraph.cfg.edges);
+  currdata = vgraph.save();
+  currdata.edges[currdata.edges.length - 1].label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label
+  console.log(currdata.edges[currdata.edges.length - 1].label);
+  vgraph.read(currdata);
+  //currdata.edges[currdata.edges.length - 1] = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label;
+  //vgraph.read(currdata);
+  //console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label);
+  //console.log(vgraph.cfg.edges);
+  //console.log(vgraph);
+  
 
 }
 

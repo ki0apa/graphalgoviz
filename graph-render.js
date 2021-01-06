@@ -1,11 +1,9 @@
 
 var vgraph;
 var nextID = 1;
-var nextLabel = 1;
-var labelToID = new Map();
 var algotype;
-var directed = false;
-var weighted = false;
+var isdirected = false;
+var isweighted = false;
 var currdata;
 var instructions;
 var arraydata;
@@ -30,7 +28,6 @@ function weightUpdate(){
 
 function clearGraph(){
   vgraph.clear();
-  nextLabel = 1;
   nextID = 1;
 }
 
@@ -68,7 +65,6 @@ function randomizeGraph(){
     data.edges.push(edgeinfo);
   }
   nextID = nodenum+1;
-  nextLabel = nodenum+1;
   vgraph.data(data);
   vgraph.render();
 
@@ -78,7 +74,7 @@ function randomizeGraph(){
 // y: 40 to 500
 
 function newDirectedGraph() {
-  directed = true;
+  isdirected = true;
   clearGraph();
   
   vgraph.set('defaultEdge',{
@@ -94,7 +90,7 @@ function newDirectedGraph() {
 }
 
 function newUndirectedGraph(){
-  directed = false;
+  isdirected = false;
   clearGraph();
 
   vgraph.set('defaultEdge',{
@@ -119,7 +115,6 @@ window.onload = function(){
         instructions = document.getElementById("instructions");
         arraydata = document.getElementById("arraydata");
 
-
         var forma = document.getElementById("weightform");
         function handleForm(event) { 
           event.preventDefault(); 
@@ -142,6 +137,7 @@ window.onload = function(){
           },
           // Click event
           onClick(ev) {
+            console.log(nextID);
             const self = this;
             // Add a new node
             vgraph.addItem('node', {
@@ -149,11 +145,9 @@ window.onload = function(){
               x: ev.canvasX,
               y: ev.canvasY,
               id: `${nextID}`, // Generate the unique id
-              label: nextLabel
+              label: nextID
             });
-            labelToID[nextLabel] = nextID;
             nextID++;
-            nextLabel++;
           },
         });
         // Register a custom behavior: click two end nodes to add an edge
@@ -223,9 +217,11 @@ window.onload = function(){
           },
         });
 
+        console.log(nextID);
         G6.registerBehavior('click-delete', {
           // Set the events and the corresponding responsing function for this behavior
           getEvents() {
+            console.log("E", nextID);
             return {
               'node:click': 'onNodeClick', // The event is canvas:click, the responsing function is onClick
               'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
@@ -233,22 +229,39 @@ window.onload = function(){
           },
           // The responsing function for node:click defined in getEvents
           onNodeClick(ev) {
+            console.log("P", isdirected, vgraph, nextID);
             const self = this;
             const node = ev.item;
             // The position where the mouse clicks
-            var label = node.getModel().label;
-            vgraph.removeItem(node);
-            for(var i = label+1; i < nextLabel; i++){
-                var nextNode = vgraph.findById(labelToID[i]);
-                vgraph.updateItem(nextNode, {
-                  label: i-1
-                });
-                labelToID[i-1] = labelToID[i]
-                labelToID[i] = -1 
+            var id = parseInt(node.getModel().id);
+            var ngraph = {nodes: [], edges: []};
+            var data = vgraph.save();
+            vgraph.clear();
+            for(var i = 0; i < data["nodes"].length; i++){
+                console.log(i);
+                if(data["nodes"][i].id > id){
+                  var next = parseInt(data["nodes"][i].id)-1;
+                  data["nodes"][i].label = next;
+                  data["nodes"][i].id = next.toString();
+                  ngraph.nodes.push(data["nodes"][i]);
+                }else if(data["nodes"][i].id < id) ngraph.nodes.push(data["nodes"][i]);
             }
-            nextLabel--;
+            for(var i = 0; i < data["edges"].length; i++){
+              var source = parseInt(data["edges"][i].source);
+              var target = parseInt(data["edges"][i].target);
+              if(source == id) continue;
+              else if(source > id) data["edges"][i].source = (source - 1).toString();
+              if(target == id) continue;
+              else if(target > id) data["edges"][i].target  = (target - 1).toString();
+              ngraph.edges.push(data["edges"][i]);
+            }
+            console.log(ngraph);
+            vgraph.data(ngraph);
+            vgraph.render();
+            nextID--;
           },
           onEdgeClick(ev){
+            console.log("C", nextID);
             const self = this;
             const edge = ev.item;
             const graph = self.graph;

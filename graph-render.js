@@ -7,6 +7,8 @@ var isweighted = false;
 var currdata;
 var instructions;
 var arraydata;
+var requirements;
+var startNode;
 
 
 function weightUpdate(){
@@ -114,6 +116,7 @@ window.onload = function(){
 
         instructions = document.getElementById("instructions");
         arraydata = document.getElementById("arraydata");
+        requirements = document.getElementById("requirements");
 
         var forma = document.getElementById("weightform");
         function handleForm(event) { 
@@ -148,6 +151,22 @@ window.onload = function(){
               label: nextID
             });
             nextID++;
+          },
+        });
+        G6.registerBehavior('click-start-node', {
+          // Set the events and the corresponding responsing function for this behavior
+          getEvents() {
+            // The event is canvas:click, the responsing function is onClick
+            return {
+              'node:click': 'onClick',
+            };
+          },
+          // Click event
+          onClick(ev) {
+            const self = this;
+            const node = ev.item;
+            console.log("E", node);  
+            startNode = parseInt(node.getModel().id);
           },
         });
         // Register a custom behavior: click two end nodes to add an edge
@@ -217,11 +236,9 @@ window.onload = function(){
           },
         });
 
-        console.log(nextID);
         G6.registerBehavior('click-delete', {
           // Set the events and the corresponding responsing function for this behavior
           getEvents() {
-            console.log("E", nextID);
             return {
               'node:click': 'onNodeClick', // The event is canvas:click, the responsing function is onClick
               'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
@@ -229,7 +246,6 @@ window.onload = function(){
           },
           // The responsing function for node:click defined in getEvents
           onNodeClick(ev) {
-            console.log("P", isdirected, vgraph, nextID);
             const self = this;
             const node = ev.item;
             // The position where the mouse clicks
@@ -238,7 +254,6 @@ window.onload = function(){
             var data = vgraph.save();
             vgraph.clear();
             for(var i = 0; i < data["nodes"].length; i++){
-                console.log(i);
                 if(data["nodes"][i].id > id){
                   var next = parseInt(data["nodes"][i].id)-1;
                   data["nodes"][i].label = next;
@@ -255,13 +270,11 @@ window.onload = function(){
               else if(target > id) data["edges"][i].target  = (target - 1).toString();
               ngraph.edges.push(data["edges"][i]);
             }
-            console.log(ngraph);
             vgraph.data(ngraph);
             vgraph.render();
             nextID--;
           },
           onEdgeClick(ev){
-            console.log("C", nextID);
             const self = this;
             const edge = ev.item;
             const graph = self.graph;
@@ -319,7 +332,8 @@ window.onload = function(){
             // Adding edge mode
             addEdge: ['click-add-edge', 'click-select'],
             trash: ['click-delete', 'click-select'],
-            weight: ['click-weight', 'click-select']
+            weight: ['click-weight', 'click-select'],
+            startNode: ['click-start-node', 'click-select']
           },
           defaultEdge: {
             style: {
@@ -365,12 +379,59 @@ window.onload = function(){
         var curSelectedTop = new Map();
         var topSelectorOnClickType = function(func, type, obj){
             return function(){
-              console.log(obj);
               func();
               curSelectedTop[type].classList.remove("selected-top");
               obj.classList.add("selected-top");
               curSelectedTop[type] = obj;
             }
+        }
+
+        algomap = {
+          dijkstra: {
+            func: algodijkstra,
+            name: "Dijksta's algorithm",
+            description: "Algorithm for finding shortest path between nodes in a graph.",
+            requirements: "Weighted graph recommended",
+          },
+          bfs: {
+            func: algobfs,
+            name: "Breadth First Search",
+            description: "An algorithm for traversing a graph.",
+            requirements: "None, works on any graph",
+          },
+          dfs:{
+            func: algodfs,
+            name: "Depth First Search",
+            description: "An algorithm for traversing a graph.",
+            requirements: "None, works on any graph",
+          },
+          topsort:{
+            func: algotopsort,
+            name: "Topological Sort",
+            description: "Sorts nodes such that if an edge exists from u to v, u comes before v in the array.",
+            requirements: "Must be a DAG (directed acyclic graph)",
+          },
+          mst:{
+            func: algomst,
+            name: "Minimum Spanning Tree",
+            description: "Selects a subset of edges such that the resulting graph is a tree and the sum of the weights of the edges in minimized",
+            requirements: "Weight undirected graph",
+          },
+          scc:{
+            func: algoscc,
+            name: "Strongly Connected Components",
+            description: "A strongly connected graph is a graph where every vertex is reachable from every other vertex. This algorithm divides the graph into strongly connected components.",
+            requirements: "Directed graph",
+          }
+        };
+
+        var selectAlgorithm = function(name){
+          return function(){
+            algotype = algomap[name].func;
+            instructions.innerHTML = "Name: " + algomap[name].name; 
+            arraydata.innerHTML = "Description: " + algomap[name].description;
+            requirements.innerHTML =  "Requirements: " + algomap[name].requirements;
+          }
         }
 
         const directed = document.getElementById('directed');
@@ -382,17 +443,17 @@ window.onload = function(){
         const unweighted = document.getElementById('unweighted');
         unweighted.onclick = topSelectorOnClickType(newUnweightedGraph, "weight", unweighted);
         const dijkstra = document.getElementById('dijkstra');
-        dijkstra.onclick = topSelectorOnClickType(function(){algotype = algodijkstra}, "algo",  dijkstra);
+        dijkstra.onclick = topSelectorOnClickType(selectAlgorithm("dijkstra"), "algo",  dijkstra);
         const bfs = document.getElementById('bfs');
-        bfs.onclick = topSelectorOnClickType(function(){algotype = algobfs}, "algo", bfs);
+        bfs.onclick = topSelectorOnClickType(selectAlgorithm("bfs"), "algo", bfs);
         const dfs = document.getElementById('dfs');
-        dfs.onclick = topSelectorOnClickType(function(){algotype = algodfs}, "algo", dfs);
+        dfs.onclick = topSelectorOnClickType(selectAlgorithm("dfs"), "algo", dfs);
         const topsort = document.getElementById('topsort');
-        topsort.onclick = topSelectorOnClickType(function(){algotype = algotopsort}, "algo", topsort);
+        topsort.onclick = topSelectorOnClickType(selectAlgorithm("topsort"), "algo", topsort);
         const mst = document.getElementById('mst');
-        mst.onclick = topSelectorOnClickType(function(){algotype = algomst}, "algo", mst);
+        mst.onclick = topSelectorOnClickType(selectAlgorithm("mst"), "algo", mst);
         const scc = document.getElementById('scc');
-        scc.onclick = topSelectorOnClickType(function(){algotype = algoscc}, "algo", scc);
+        scc.onclick = topSelectorOnClickType(selectAlgorithm("scc"), "algo", scc);
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
         curSelectedTop["algo"] = dijkstra;

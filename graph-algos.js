@@ -26,7 +26,6 @@ function convertGraph(){
 	for(var i = 0; i < nextID; i++){
 		graph[i] = []
 	}
-	console.log(graphinfo["nodes"]);
 	edges = graphinfo["edges"];
 	for(var i = 0; i < graphinfo["edges"].length; i++){
 		var weight = getWeight(graphinfo["edges"][i]);
@@ -35,7 +34,6 @@ function convertGraph(){
 			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), weight]);
 		}
 	}
-	console.log(graph);
 }
 
 function updateInstructions(str){
@@ -80,10 +78,18 @@ function resetGraph(){
 	}
 }
 
+async function selectNode(message){
+	updateInstructions(message);
+	startNode = -1;
+	vgraph.setMode("startNode");
+	while(startNode == -1) await sleep(100);
+	console.log(startNode);
+	return startNode;
+}
+
 //breadth first search starting at node s
 async function algobfs(){
-	console.log(graph);
-	var s = 1;
+	var s = await selectNode("Select starting node");
 	var q = [s];
 	var visited = [];
 	for(var i = 0; i < n; i++){
@@ -92,7 +98,6 @@ async function algobfs(){
 	visited[s] = true;
 	visitNode(s);
 	while(q.length > 0){
-		await sleep(sleeptime);
 		var cur = q[0];
 		exitNode(cur);
 		updateInstructions("Looking at the neighbors of node: " + cur.toString());
@@ -105,31 +110,34 @@ async function algobfs(){
 				q.push(node[0]);
 			}
 		}
+		await sleep(sleeptime);
 	}
 	resetGraph();
 }
 
 //depth first search starting at node s
 async function dfs_recursive(s){
-	await sleep(sleeptime);
-	updateInstructions("Entering node: " + s.toString())
+	updateInstructions("Entering node: " + s.toString());
 	visitNode(s);
 	dfsVisited[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
+		await sleep(sleeptime);
+		updateInstructions("Looking at next neighbor of node: " + s.toString());
 		if(!dfsVisited[node[0]])
 			await dfs_recursive(node[0]);
 	}
-	await sleep("Exiting node: " + s.toString());
+	await sleep(sleeptime);
+	updateInstructions("Exit node: " + s.toString());
 	exitNode(s);
 }
 
 var dfsVisited = []
-function algodfs(){
-	var s = 1;
+async function algodfs(){
+	var s = await selectNode("Select starting node");
 	dfsVisited = Array(n);
 	for(var i = 0; i < n; i++) dfsVisited[i] = false;
-	dfs_recursive(s);
+	await dfs_recursive(s);
 	updateInstructions("Done!");
 	resetGraph();
 }
@@ -156,7 +164,7 @@ function updateGraphDij(dist, prev, visited){
 var inf = 1e9;
 
 async function algodijkstra(){
-	s = 1;
+	s = await selectNode("Select starting node.");
 	var dist = [];
 	var prev = [];
 	var visited = []

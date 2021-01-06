@@ -182,7 +182,6 @@ window.onload = function(){
               self.edge = null;
               self.addingEdge = false;
             } else {
-              document.querySelector('.weightform').style.display = 'flex';
 
               // Add anew edge, the end node is the current node user clicks
               self.edge = vgraph.addItem('edge', {
@@ -191,9 +190,12 @@ window.onload = function(){
                 label: "Weight: 0"
               });
 
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 1;
+              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
               vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
               self.addingEdge = true;
+              document.querySelector('.weightform').style.display = 'flex';              
+              document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+
             }
           },
           // The responsing function for mousemove defined in getEvents
@@ -255,6 +257,37 @@ window.onload = function(){
           }
         });
 
+        //REGISTERS BEHAVIOR FOR CHANGING EDGE WEIGHT
+
+        G6.registerBehavior('click-weight', {
+          // Set the events and the corresponding responsing function for this behavior
+          getEvents() {
+            return {
+              'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
+            };
+          },
+          // The responsing function for node:click defined in getEvents
+          onEdgeClick(ev){
+            const self = this;
+            const edge = ev.item;
+            const graph = self.graph;
+            console.log("LETSGOBABY")
+            console.log(edge);
+            // The position where the mouse clicks
+            /*
+            vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
+            vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+            self.addingEdge = true;
+            document.querySelector('.weightform').style.display = 'flex';              
+            document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+            */
+          }
+        });
+
+
+
+
+
         const container = document.getElementById('container');
 
 
@@ -272,7 +305,8 @@ window.onload = function(){
             addNode: ['click-add-node', 'click-select'],
             // Adding edge mode
             addEdge: ['click-add-edge', 'click-select'],
-            trash: ['click-delete', 'click-select']
+            trash: ['click-delete', 'click-select'],
+            weight: ['click-weight', 'click-select']
           },
           defaultEdge: {
             style: {
@@ -308,6 +342,9 @@ window.onload = function(){
         move.onclick = leftSelectorOnClick("move", move);
         const trash = document.getElementById('Trash');
         trash.onclick = leftSelectorOnClick("trash", trash);
+        const weightchange = document.getElementById('Weights');
+        weightchange.onclick = leftSelectorOnClick("weight", weightchange);
+
         vgraph.setMode("addNode");
         curSelectedLeft = newNode;
 

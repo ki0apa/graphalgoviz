@@ -9,9 +9,14 @@ var n;
 
 var graph;
 var edges = [];
+var sleeptime = 3000;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getWeight(edge){
+	return parseInt(edge.label.replace("Weight: ", ""))
 }
 
 function convertGraph(){
@@ -24,12 +29,21 @@ function convertGraph(){
 	console.log(graphinfo["nodes"]);
 	edges = graphinfo["edges"];
 	for(var i = 0; i < graphinfo["edges"].length; i++){
-		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), 0]);
+		var weight = getWeight(graphinfo["edges"][i]);
+		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), weight]);
 		if(!directed){
-			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), 0]);
+			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), weight]);
 		}
 	}
-	console.log(edges);
+	console.log(graph);
+}
+
+function updateInstructions(str){
+	instructions.innerHTML = str;
+}
+
+function updateArray(str){
+	arraydata.innerHTML = str;
 }
 
 function visitNode(id){
@@ -78,9 +92,10 @@ async function algobfs(){
 	visited[s] = true;
 	visitNode(s);
 	while(q.length > 0){
-		await sleep(1000);
+		await sleep(sleeptime);
 		var cur = q[0];
 		exitNode(cur);
+		updateInstructions("Looking at the neighbors of node: " + cur.toString());
 		q.shift();
 		for(var edge in graph[cur]){
 			var node = graph[cur][edge];
@@ -96,8 +111,8 @@ async function algobfs(){
 
 //depth first search starting at node s
 async function dfs_recursive(s){
-	console.log(s);
-	await sleep(1000);
+	await sleep(sleeptime);
+	updateInstructions("Entering node: " + s.toString())
 	visitNode(s);
 	dfsVisited[s] = true;
 	for(var edge in graph[s]){
@@ -105,6 +120,7 @@ async function dfs_recursive(s){
 		if(!dfsVisited[node[0]])
 			await dfs_recursive(node[0]);
 	}
+	await sleep("Exiting node: " + s.toString());
 	exitNode(s);
 }
 
@@ -114,6 +130,7 @@ function algodfs(){
 	dfsVisited = Array(n);
 	for(var i = 0; i < n; i++) dfsVisited[i] = false;
 	dfs_recursive(s);
+	updateInstructions("Done!");
 	resetGraph();
 }
 
@@ -148,16 +165,26 @@ async function algodijkstra(){
 		prev.push(-1);
 		visited.push(false);
 	}
+	updateGraphDij(dist, prev, visited);
+	updateInstructions("Initializing all distances to \u221e");
+	await sleep(sleeptime);
 	dist[s] = 0;
 	updateGraphDij(dist, prev, visited);
+	updateInstructions("Setting the distance at " + s.toString() + " to 0.");
 	while(true){
-		await sleep(1000);
+		await sleep(sleeptime);
 		var u = -1;
 		for(var i = 0; i < n; i++){
 			if(!visited[i] && (u == -1 || dist[i] < dist[u])) u = i;
 		}
 		if(u == -1) break;
+		if(dist[u] == inf) break;
+		updateInstructions("Visiting a unvisited node with minimum distance: node " + u.toString());
 		visited[u] = true;
+		updateGraphDij(dist, prev, visited);
+		await sleep(sleeptime);
+		updateInstructions("Updating " + u.toString() + "'s neighbors' distances and \"previous node\"");
+
 
 
 		for(var x in graph[u]){
@@ -170,26 +197,31 @@ async function algodijkstra(){
 		}
 		updateGraphDij(dist, prev, visited);
 	}
+	updateInstructions("Done!");
 }
 
 
 //topological sort
 var topSortResult = [];
 var topSortVisited = []
-async function dfsTopSort(s, b){
+async function dfsTopSort(s){
 	if(topSortVisited[s]) return;
 	console.log(s);
-	if(b) await sleep(1000);
-	if(b) visitNode(s);
+	await sleep(sleeptime);
+	updateInstructions("Visiting node: " + s.toString());
+	visitNode(s);
 	topSortVisited[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
 		if(!topSortVisited[node[0]]){
-			var res = await dfsTopSort(node[0], b);
+			var res = await dfsTopSort(node[0]);
 		}
 	}
+	await sleep(sleeptime);
+	updateInstructions("Exiting: " + s.toString() + ". Add " + s.toString() + " to beginning of array");
 	topSortResult.unshift(s);
-	if(b) exitNode(s);
+	updateArray(topSortResult.toString());
+	exitNode(s);
 }
 
 async function algotopsort(){
@@ -198,19 +230,43 @@ async function algotopsort(){
 	for(var i = 0; i < n; i++){
 		topSortVisited[i] = false;
 	}
-	for(var i = 0; i < n; i++) if(!topSortVisited[i]) await dfsTopSort(i, true);
+	updateInstructions("Perform dfs on each node!")
+
+	for(var i = 1; i < n; i++) if(!topSortVisited[i]) await dfsTopSort(i);
 }
 
 var parent;
 function find(a){if(parent[a] == a) return a; return parent[a] = find(parent[a]);}
 
-function useEdge(edge1){
-	edge = vgraph.findById(edge1.id);
+function useEdgeTmp(edge1){
+	var edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#00ff00"
+		}
+	})
+}
+
+function useEdgePerm(edge1){
+	var edge = vgraph.findById(edge1.id);
 	vgraph.updateItem(edge, {
 		style:{
 			stroke: "#ff0000"
 		}
 	})
+}
+
+function deleteEdge(edge1){
+	var edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#808080"
+		}
+	})
+}
+
+function comparefunc(a, b){
+	return getWeight(a) - getWeight(b);
 }
 
 //minimum spanning tree
@@ -219,13 +275,24 @@ async function algomst(){
 	for(var i = 0; i < edges.length; i++){
 		parent[i] = i;
 	}
+	edges.sort(comparefunc);
 	for(var i = 0; i < edges.length	; i++){
-		console.log(parent);
-		if(find(edges[i].source) != find(edges[i].target)){
-			useEdge(edges[i]);
-			parent[find(edges[i].source)] = find(edges[i].target);
+		updateInstructions("Looking at the smallest weighted edge");
+		useEdgeTmp(edges[i]);
+		var a = find(parseInt(edges[i].source));
+		var b = find(parseInt(edges[i].target));
+		await sleep(sleeptime);
+		if(a != b){
+			updateInstructions("Adding edge to tree, since nodes are not connected");
+			useEdgePerm(edges[i]);
+			parent[a] = b;
+		}else{
+			updateInstructions("Nodes are already connected, so do not add edge to tree");
+			deleteEdge(edges[i]);
 		}
+		await sleep(sleeptime);
 	}
+	updateInstructions("Done!");
 }
 
 //strongly connected components
@@ -233,23 +300,43 @@ async function algomst(){
 var stackSCC;
 var visitedSCC;
 
-async function dfsSCC(s){
-	console.log(s);
+async function dfsSCC(s, b){
+	await sleep(sleeptime);
+	updateInstructions("Visiting node: " + s.toString());
+	visitNode(s);
 	visitedSCC[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
 		if(!visitedSCC[node[0]])
-			dfsSCC(node[0]);
+			await dfsSCC(node[0], b);
 	}
-	console.log(s);
+	await sleep(sleeptime);
+	if(!b) updateInstructions("Adding " + s.toString() + " to stack");
+	else updateInstructions("Adding " + s.toString() + " to component");
+	exitNode(s)
 	stackSCC.push(s);
+}
+
+function reverseGraph(){
+	var graphinfo = vgraph.save();
+	for(var i = 0; i < graphinfo["edges"].length; i++){
+		var edge = vgraph.findById(graphinfo["edges"][i].id);
+		vgraph.removeItem(edge);
+		var tmp = graphinfo["edges"][i].source;
+		graphinfo["edges"][i].source = graphinfo["edges"][i].target;
+		graphinfo["edges"][i].target = tmp;
+		vgraph.addItem('edge', graphinfo["edges"][i]);
+	}
 }
 
 async function algoscc(){
 	stackSCC = [];
 	visitedSCC = Array(n);
 	for(var i = 1; i < n; i++) visitedSCC[i] = false;
-	for(var i = 1; i < n; i++) if(!visitedSCC[i]) dfsSCC(i);
+	updateInstructions("Preforming dfs on graph");
+	for(var i = 1; i < n; i++) if(!visitedSCC[i]) await dfsSCC(i, false);
+	await sleep(sleeptime);
+	resetGraph();
 	var ngraph = Array(n);
 	for(var i= 1; i < n; i++) ngraph[i] = [];
 	for(var i = 1; i < n; i++){
@@ -258,15 +345,20 @@ async function algoscc(){
 		}
 	}
 	graph = ngraph;
-	console.log(graph);
+	await sleep(sleeptime);
+	updateInstructions("reverse each edge");
+	reverseGraph();
 	visitedSCC = Array(n);
 	for(var i = 1; i < n; i++) visitedSCC[i] = false;
 	lastStack = stackSCC;
 	var idCombo = 1;
+	console.log(lastStack);
 	for(var i = n-2; i >= 0; i--){
 		stackSCC = [];
 		if(!visitedSCC[lastStack[i]]){
-			dfsSCC(lastStack[i]);
+			await sleep(sleeptime);
+			updateInstructions("Performing dfs on next node in the stack: " + lastStack[i].toString());
+			await dfsSCC(lastStack[i], true);
 			combo = {id: "combo" + idCombo.toString(), nodes:[]};
 			for(var j = 0; j < stackSCC.length; j++){
 				combo.nodes.push({id: stackSCC[j].toString()});
@@ -280,10 +372,13 @@ async function algoscc(){
 			vgraph.addItem('combo', combo);
 			console.log(vgraph.save());
 			console.log(stackSCC);
+			vgraph.data(vgraph.save());
+			vgraph.render();
 		}
 	}
-	vgraph.data(vgraph.save());
-	vgraph.render();
+	updateInstructions("Done!");
+	resetGraph();
+	reverseGraph();
 }
 
 //Maximum flow

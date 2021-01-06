@@ -7,6 +7,8 @@ var algotype;
 var directed = false;
 var weighted = false;
 var currdata;
+var instructions;
+var arraydata;
 
 
 function weightUpdate(){
@@ -113,6 +115,9 @@ function newUnweightedGraph(){
 }
 
 window.onload = function(){
+
+        instructions = document.getElementById("instructions");
+        arraydata = document.getElementById("arraydata");
 
 
         var forma = document.getElementById("weightform");

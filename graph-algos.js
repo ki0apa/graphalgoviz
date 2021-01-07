@@ -34,12 +34,11 @@ function convertGraph(){
 		var weight = getWeight(graphinfo["edges"][i]);
 		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), weight]);
 		edgeMap[parseInt(graphinfo["edges"][i].source)][parseInt(graphinfo["edges"][i].target)] = graphinfo["edges"][i];
-		if(!directed){
+		if(!isdirected){
 			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), weight]);
 			edgeMap[parseInt(graphinfo["edges"][i].target)][parseInt(graphinfo["edges"][i].source)] = graphinfo["edges"][i];
 		}
 	}
-	console.log(edgeMap);	
 }
 
 function updateInstructions(str){
@@ -172,7 +171,7 @@ function useEdgePerm(edge1){
 		style:{
 			stroke: "#ff0000"
 		}
-	})
+	});
 }
 
 function useEdgeTmp(edge1){
@@ -181,7 +180,7 @@ function useEdgeTmp(edge1){
 		style:{
 			stroke: "#00ff00"
 		}
-	})
+	});
 }
 
 function deleteEdge(edge1){
@@ -190,7 +189,7 @@ function deleteEdge(edge1){
 		style:{
 			stroke: "#808080"
 		}
-	})
+	});
 }
 
 //dijkstra's starting at node s

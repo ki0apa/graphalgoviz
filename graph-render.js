@@ -10,6 +10,8 @@ var arraydata;
 var requirements;
 var startNode;
 var weightIndex;
+var width;
+var height;
 
 
 function weightUpdate(){
@@ -24,8 +26,6 @@ function weightUpdate(){
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   document.getElementById('weightcounter').innerHTML = "Current Weight: " + parseInt(document.querySelector('#newweight').value);
-
-
 }
 
 
@@ -34,20 +34,32 @@ function clearGraph(){
   nextID = 1;
 }
 
+function match(edges, edgeinfo){
+  for(var i = 0; i < edges.length; i++){
+    if(edges[i].source == edgeinfo.source && edges[i].target == edgeinfo.target) return false;
+    if(!isdirected && edges[i].source == edgeinfo.target && edges[i].target == edgeinfo.source) return false;
+  }
+  return true;
+}
+
 function randomizeGraph(){
   clearGraph();
   var nodenum = parseInt(document.querySelector('#nodenum').value);
   var edgenum = parseInt(document.querySelector('#edgenum').value);
+  var minweight = parseInt(document.querySelector('#minweight').value);
+  var maxweight = parseInt(document.querySelector('#maxweight').value);
   
 
   var i;
   var data = {nodes:[], edges:[]};
+  var r = width / 3;
+  if(height / 3 < r) r = height / 3;
   for (i = 1; i <= nodenum; i++) {
     data.nodes.push({
       id: i.toString(),
       label: i.toString(),
-      x: Math.floor(Math.random() * (1200 - 100 + 1) + 100),
-      y: Math.floor(Math.random() * (500 - 40 + 1) + 40),
+      x: width / 2 + r*Math.cos(2 * Math.PI * i / nodenum),
+      y: height / 2 + r*Math.sin(2 * Math.PI * i / nodenum),
       size: 60
     })
   }
@@ -57,14 +69,15 @@ function randomizeGraph(){
     do{
       s = Math.floor(Math.random() * (nodenum) + 1).toString();
       d = Math.floor(Math.random() * (nodenum) + 1).toString();
+      var weight = Math.floor(Math.random() * (maxweight - minweight+1) + minweight).toString();
       var edgeinfo = {
         source: s,
         target: d,
         weight: 0,
-        label: 'Weight: 0',
+        label: 'Weight: ' + weight,
         curveOffset: 0,
       } 
-    } while (s == d && (data.edges.includes(edgeinfo) == false));
+    } while (s == d && !match(data.edges, edgeinfo));
     data.edges.push(edgeinfo);
   }
   nextID = nodenum+1;
@@ -192,6 +205,9 @@ window.onload = function(){
               vgraph.updateItem(self.edge, {
                 target: model.id,
               });
+              document.getElementById('newweight').value = "";
+              document.getElementById('newweight').focus();
+
 
               self.edge = null;
               self.addingEdge = false;
@@ -304,9 +320,10 @@ window.onload = function(){
             const self = this;
             const edge = ev.item;
             const graph = self.graph;
-            console.log("LETSGOBABY")
             weightIndex = vgraph.cfg.edges.indexOf(edge);
             document.getElementById('weightcounter').innerHTML = "Current Weight: " + currdata.edges[weightIndex].weight.toString();
+            document.getElementById('newweight').value = "";
+            document.getElementById('newweight').focus();
 
             // The position where the mouse clicks
             /*
@@ -326,8 +343,8 @@ window.onload = function(){
         const container = document.getElementById('container');
 
 
-        const width = container.scrollWidth;
-        const height = (container.scrollHeight || 500) - 30;
+        width = container.scrollWidth;
+        height = (container.scrollHeight || 500) - 30;
         vgraph = new G6.Graph({
           container: 'container',
           width,

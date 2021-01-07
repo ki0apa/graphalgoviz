@@ -37,6 +37,7 @@ function clearGraph(){
 
 function match(edges, edgeinfo){
   for(var i = 0; i < edges.length; i++){
+    console.log(edges[i], edgeinfo)
     if(edges[i].source == edgeinfo.source && edges[i].target == edgeinfo.target) return false;
     if(!isdirected && edges[i].source == edgeinfo.target && edges[i].target == edgeinfo.source) return false;
   }
@@ -203,9 +204,17 @@ window.onload = function(){
             const point = { x: ev.x, y: ev.y };
             const model = node.getModel();
             if (self.addingEdge && self.edge) {
-              vgraph.updateItem(self.edge, {
-                target: model.id,
-              });
+              var edges = vgraph.save().edges;
+              var edge = {source: self.edge.getModel().source, target: model.id};
+              console.log(edge, edges, match(edges, self.edge));
+              if(!match(edges, edge)){
+                vgraph.removeItem(self.edge);
+                instructions.innerHTML = "You cannot have double edges";
+              }else{
+                vgraph.updateItem(self.edge, {
+                  target: model.id,
+                });
+              }
               document.getElementById('newweight').value = "";
               document.getElementById('newweight').focus();
 

@@ -9,21 +9,22 @@ var instructions;
 var arraydata;
 var requirements;
 var startNode;
+var weightIndex;
 
 
 function weightUpdate(){
-  vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = parseInt(document.querySelector('#newweight').value);
-  vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+  vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
+  vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
-  currdata.edges[currdata.edges.length - 1].label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label
-  console.log(currdata.edges[currdata.edges.length - 1].label);
+  currdata.edges[weightIndex].weight = parseInt(document.querySelector('#newweight').value);
+  currdata.edges[weightIndex].label = vgraph.cfg.edges[weightIndex]._cfg.label
+  console.log(currdata.edges[weightIndex].label);
   vgraph.read(currdata);
-  //currdata.edges[currdata.edges.length - 1] = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label;
-  //vgraph.read(currdata);
-  //console.log(vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label);
-  //console.log(vgraph.cfg.edges);
-  //console.log(vgraph);
-  
+  console.log(currdata);
+  vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
+  vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
+  document.getElementById('weightcounter').innerHTML = "Current Weight: " + parseInt(document.querySelector('#newweight').value);
+
 
 }
 
@@ -200,11 +201,15 @@ window.onload = function(){
               self.edge = vgraph.addItem('edge', {
                 source: model.id,
                 target: model.id,
-                label: "Weight: 0"
+                label: "Weight: 0",
+                weight: 0
               });
-
+              //EDGEWEIGHT
+              weightIndex = (vgraph.cfg.edges).length - 1;
               vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
               vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+                     
+              
               self.addingEdge = true;
               document.querySelector('.weightform').style.display = 'flex';              
               document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
@@ -294,11 +299,15 @@ window.onload = function(){
           },
           // The responsing function for node:click defined in getEvents
           onEdgeClick(ev){
+            //EDGEWEIGHT2
+            currdata = vgraph.save();
             const self = this;
             const edge = ev.item;
             const graph = self.graph;
             console.log("LETSGOBABY")
-            console.log(edge);
+            weightIndex = vgraph.cfg.edges.indexOf(edge);
+            document.getElementById('weightcounter').innerHTML = "Current Weight: " + currdata.edges[weightIndex].weight.toString();
+
             // The position where the mouse clicks
             /*
             vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;

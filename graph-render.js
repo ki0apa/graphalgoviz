@@ -13,6 +13,7 @@ var weightIndex;
 
 
 function weightUpdate(){
+  console.log("called");
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
@@ -471,6 +472,11 @@ window.onload = function(){
         scc.onclick = topSelectorOnClickType(selectAlgorithm("scc"), "algo", scc);
         const maxflow = document.getElementById('maxflow');
         maxflow.onclick = topSelectorOnClickType(selectAlgorithm("maxflow"), "algo", maxflow);
+
+        const field = document.querySelector('#newweight');
+        field.addEventListener('input', weightUpdate);
+
+
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
         curSelectedTop["algo"] = dijkstra;

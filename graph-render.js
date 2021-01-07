@@ -422,6 +422,12 @@ window.onload = function(){
             name: "Strongly Connected Components",
             description: "A strongly connected graph is a graph where every vertex is reachable from every other vertex. This algorithm divides the graph into strongly connected components.",
             requirements: "Directed graph",
+          },
+          maxflow:{
+            func: algomaxflow,
+            name: "Maximum Flow/Minimum Cut",
+            description: "Each edge is assigned a \"flow\" up to the edges capacity (weight). All incoming flow needs to equal all outcoming flow on a node. Calculates the maximum flow from a source node to a sink node.",
+            requirements: "Directed graph",
           }
         };
 
@@ -454,6 +460,8 @@ window.onload = function(){
         mst.onclick = topSelectorOnClickType(selectAlgorithm("mst"), "algo", mst);
         const scc = document.getElementById('scc');
         scc.onclick = topSelectorOnClickType(selectAlgorithm("scc"), "algo", scc);
+        const maxflow = document.getElementById('maxflow');
+        maxflow.onclick = topSelectorOnClickType(selectAlgorithm("maxflow"), "algo", maxflow);
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
         curSelectedTop["algo"] = dijkstra;

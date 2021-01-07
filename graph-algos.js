@@ -9,6 +9,7 @@ var n;
 
 var graph;
 var edges = [];
+var edgeMap;
 var sleeptime = 3000;
 
 function sleep(ms) {
@@ -23,17 +24,22 @@ function convertGraph(){
 	var graphinfo = vgraph.save();
 	graph = new Array(nextID);
 	n = nextID;
+	edgeMap = Array(n);
 	for(var i = 0; i < nextID; i++){
+		edgeMap[i] = Array(n);
 		graph[i] = []
 	}
 	edges = graphinfo["edges"];
 	for(var i = 0; i < graphinfo["edges"].length; i++){
 		var weight = getWeight(graphinfo["edges"][i]);
 		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), weight]);
+		edgeMap[parseInt(graphinfo["edges"][i].source)][parseInt(graphinfo["edges"][i].target)] = graphinfo["edges"][i];
 		if(!directed){
 			graph[parseInt(graphinfo["edges"][i].target)].push([parseInt(graphinfo["edges"][i].source), weight]);
+			edgeMap[parseInt(graphinfo["edges"][i].target)][parseInt(graphinfo["edges"][i].source)] = graphinfo["edges"][i];
 		}
 	}
+	console.log(edgeMap);	
 }
 
 function updateInstructions(str){
@@ -160,6 +166,33 @@ function updateGraphDij(dist, prev, visited){
 	}
 }
 
+function useEdgePerm(edge1){
+	var edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#ff0000"
+		}
+	})
+}
+
+function useEdgeTmp(edge1){
+	var edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#00ff00"
+		}
+	})
+}
+
+function deleteEdge(edge1){
+	var edge = vgraph.findById(edge1.id);
+	vgraph.updateItem(edge, {
+		style:{
+			stroke: "#808080"
+		}
+	})
+}
+
 //dijkstra's starting at node s
 var inf = 1e9;
 
@@ -205,7 +238,13 @@ async function algodijkstra(){
 		}
 		updateGraphDij(dist, prev, visited);
 	}
-	updateInstructions("Done!");
+	t = await selectNode("Select end node to show shortest path.");
+	while(prev[t] != -1){
+		updateInstructions("Selecting edge based on the value at \"prev\"");
+		useEdgePerm(edgeMap[prev[t]][t]);
+		t = prev[t];
+		await sleep(sleeptime);
+	}
 }
 
 
@@ -245,33 +284,6 @@ async function algotopsort(){
 
 var parent;
 function find(a){if(parent[a] == a) return a; return parent[a] = find(parent[a]);}
-
-function useEdgeTmp(edge1){
-	var edge = vgraph.findById(edge1.id);
-	vgraph.updateItem(edge, {
-		style:{
-			stroke: "#00ff00"
-		}
-	})
-}
-
-function useEdgePerm(edge1){
-	var edge = vgraph.findById(edge1.id);
-	vgraph.updateItem(edge, {
-		style:{
-			stroke: "#ff0000"
-		}
-	})
-}
-
-function deleteEdge(edge1){
-	var edge = vgraph.findById(edge1.id);
-	vgraph.updateItem(edge, {
-		style:{
-			stroke: "#808080"
-		}
-	})
-}
 
 function comparefunc(a, b){
 	return getWeight(a) - getWeight(b);
@@ -390,4 +402,86 @@ async function algoscc(){
 }
 
 //Maximum flow
-//bipartite matching
+
+var flow;
+
+async function maxflowBFS(s, t){
+	visited = Array(n);
+	parent = Array(n);
+	for(var i = 0; i < n; i++){
+		visited[i] = false;
+		parent[i] = -1;
+	}
+	q = [s];
+	visited[s] = true;
+	while(q.length > 0){
+		var cur = q[0];
+		q.shift();
+		if(cur == t){
+			return parent;
+		}
+		for(var i = 0; i < graph[cur].length; i++){
+			var e = graph[cur][i][0];
+			if(!visited[e] && flow[cur][e] < graph[cur][i][1]){
+				visited[e] = true;
+				parent[e] = cur;
+				q.push(e);
+			}
+		}
+	}
+	return false;
+}
+
+function updateLabelEdge(id, l){
+	var edge = vgraph.findById(id);
+	vgraph.updateItem(edge, {
+		label: l
+	})
+}
+
+function min(a, b){
+	if(a < b) return a;
+	return b;
+}
+
+async function algomaxflow(){
+	flow = Array(n);
+	for(var i = 0; i < n; i++) {
+		flow[i] = Array(n);
+		for(var j = 0; j < n; j++){
+			flow[i][j] = 0;
+		}
+	}
+	s = await selectNode("Select source");
+	t = await selectNode("Select sink");
+	while(parent = await maxflowBFS(s, t)){
+		var next = t;
+		var mi = 1e9;
+		while(parent[next] != -1){
+			mi = min(mi, getWeight(edgeMap[parent[next]][next]) - flow[parent[next]][next]);
+			useEdgePerm(edgeMap[parent[next]][next]);
+			next = parent[next];
+		}
+		updateInstructions("Find a valid path from source to sink");
+		await sleep(sleeptime);
+		updateInstructions("Add " + mi + " flow to edge edge on path");
+		next = t;
+		while(parent[next] != -1){
+			flow[parent[next]][next] += mi;
+			next = parent[next];
+		}
+		for(var i = 0; i < n; i++){
+			for(var j = 0; j < n; j++){
+				if(flow[i][j] > 0){
+					updateLabelEdge(edgeMap[i][j].id, flow[i][j].toString() + "/" + getWeight(edgeMap[i][j]));
+				}
+			}
+		}
+		await sleep(sleeptime);
+		next = t;
+		while(parent[next] != -1){
+			deleteEdge(edgeMap[parent[next]][next]);
+			next = parent[next];
+		}
+	}
+}

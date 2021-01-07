@@ -15,7 +15,6 @@ var height;
 
 
 function weightUpdate(){
-  console.log("called");
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
@@ -121,11 +120,11 @@ function newUndirectedGraph(){
 }
 
 function newWeightedGraph(){
-
+  isweighted = true;
 }
 
 function newUnweightedGraph(){
-
+  isweighted = false;
 }
 
 window.onload = function(){
@@ -139,12 +138,6 @@ window.onload = function(){
           event.preventDefault(); 
         } 
         forma.addEventListener('submit', handleForm);
-
-        var form = document.getElementById("randomgraph");
-        function handleForm(event) { 
-          event.preventDefault(); 
-        } 
-        form.addEventListener('submit', handleForm);
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior
@@ -476,14 +469,29 @@ window.onload = function(){
           }
         }
 
+        var doNothing = function(){}
+
+        var show = function(){
+          document.getElementById("randomform").style.display = "block";
+        }
+
+        var unshow = function(){
+          document.getElementById("randomform").style.display = "none";
+
+        }
+
         const directed = document.getElementById('directed');
-        directed.onclick = topSelectorOnClickType(newDirectedGraph, "direction", directed);
+        directed.onclick = topSelectorOnClickType(doNothing, "direction", directed);
         const undirected = document.getElementById('undirected');
-        undirected.onclick = topSelectorOnClickType(newUndirectedGraph, "direction", undirected);
+        undirected.onclick = topSelectorOnClickType(doNothing, "direction", undirected);
         const weighted = document.getElementById('weighted');
-        weighted.onclick = topSelectorOnClickType(newWeightedGraph, "weight", weighted);
+        weighted.onclick = topSelectorOnClickType(doNothing, "weight", weighted);
         const unweighted = document.getElementById('unweighted');
-        unweighted.onclick = topSelectorOnClickType(newUnweightedGraph, "weight", unweighted);
+        unweighted.onclick = topSelectorOnClickType(doNothing, "weight", unweighted);
+        const blank = document.getElementById('blank');
+        blank.onclick = topSelectorOnClickType(unshow, "type", blank);
+        const random = document.getElementById('random');
+        random.onclick = topSelectorOnClickType(show, "type", random);
         const dijkstra = document.getElementById('dijkstra');
         dijkstra.onclick = topSelectorOnClickType(selectAlgorithm("dijkstra"), "algo",  dijkstra);
         const bfs = document.getElementById('bfs');
@@ -498,6 +506,16 @@ window.onload = function(){
         scc.onclick = topSelectorOnClickType(selectAlgorithm("scc"), "algo", scc);
         const maxflow = document.getElementById('maxflow');
         maxflow.onclick = topSelectorOnClickType(selectAlgorithm("maxflow"), "algo", maxflow);
+        var d = document.getElementById("submit")
+        console.log(d);
+        d.onclick = function(){
+          console.log("HE");
+          if(curSelectedTop["direction"] == undirected) newUndirectedGraph();
+          else newDirectedGraph();
+          if(curSelectedTop["weight"] == unweighted) newUnweightedGraph();
+          else newWeightedGraph();
+          if(curSelectedTop["type"] == random) randomizeGraph();
+        }
 
         const field = document.querySelector('#newweight');
         field.addEventListener('input', weightUpdate);
@@ -505,6 +523,7 @@ window.onload = function(){
 
         curSelectedTop["direction"] = undirected;
         curSelectedTop["weight"] = unweighted;
+        curSelectedTop["type"] = blank;
         curSelectedTop["algo"] = dijkstra;
         algotype = algobfs;
 

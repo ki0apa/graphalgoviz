@@ -48,11 +48,58 @@
 			width: 100%;
 		}
 
+		#randomform {
+			display: none;
+			width: 90%;
+			padding-bottom: 5px;
+		}
+
+		#randomform * {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+			width: 90%;
+		}
+
+		#submit{
+			width: 100%;
+			background-color: #3e8e41;
+			text-align: center;
+		}
+
+		#submit * {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+			width: 90%;
+		}
+
+		#randomform input {
+	        background-color: transparent;
+	        width: 100%;
+	        color: black;
+	        outline: none;
+	        outline-style: none;
+	        outline-offset: 0;
+	        border-top: none;
+	        border-left: none;
+	        border-right: none;
+	        border-bottom: solid black 1px;
+	        padding: 0px;
+	        margin-left: 10px;
+	    }
+
+	    #submit:hover{background-color: #2e7e31;}
+
 		.option *:hover {background-color: #ddd;}
 
 		.dropdown:hover .dropdown-content {display: flex; flex-wrap: wrap;}
 
 		.toolbar-div:hover button {background-color: #3e8e41 !important;}
+
+		a:hover { cursor: pointer; }
 
 		.toolbar-div{
 			position: relative;
@@ -114,21 +161,6 @@
 </head>
 <body>
 	<div>
-		<form onsubmit="randomizeGraph()" id="randomgraph">
-		  <label for="nodenum">Number of Nodes</label>
-		  <input type="text" id="nodenum" placeholder="Number of nodes..">
-	  
-		  <label for="edgenum">Number of Edges</label>
-		  <input type="text" id="edgenum" placeholder="Number of edges..">
-
-		  <label for="minweight">Minimum Weight</label>
-		  <input type="text" id="minweight" placeholder="Minimum weight..">
-
-		  <label for="maxweight">Maximum Weight</label>
-		  <input type="text" id="maxweight" placeholder="Maximum weight..">
-		
-		  <input id= "submit" type="submit" value="Generate Random Graph">
-		</form>
 	  </div>
 	<header>
 		<div id="title" style="margin-left:0;">
@@ -144,6 +176,26 @@
 				<div class="option">
 					<a id="unweighted" class="selected-top options-2">Unweighted</a>
 					<a id="weighted" class="options-2">Weighted</a>
+				</div>
+				<div class="option">
+					<a id="blank" class="selected-top options-2">Blank</a>
+					<a id="random" class="options-2">Random</a>
+				</div>
+				<form id="randomform" autocomplete="off">
+				  <label for="nodenum"># of Nodes</label>
+				  <input type="text" id="nodenum">
+			  		
+				  <label for="edgenum"># of Edges</label>
+				  <input type="text" id="edgenum">
+
+				  <label for="minweight">Min Weight</label>
+				  <input type="text" id="minweight">
+
+				  <label for="maxweight">Max Weight</label>
+				  <input type="text" id="maxweight">
+				</form>
+				<div id="submit">
+					<a>Submit</a>
 				</div>
 			</div>
 		</div>

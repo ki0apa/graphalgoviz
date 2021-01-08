@@ -187,7 +187,7 @@ function deleteEdge(edge1){
 	var edge = vgraph.findById(edge1.id);
 	vgraph.updateItem(edge, {
 		style:{
-			stroke: "#808080"
+			stroke: "#eaff8f"
 		}
 	});
 }

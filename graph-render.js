@@ -16,7 +16,7 @@ var height;
 
 function weightUpdate(){
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
-  vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
+  vgraph.cfg.edges[weightIndex]._cfg.label = vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
   currdata.edges[weightIndex].weight = parseInt(document.querySelector('#newweight').value);
   currdata.edges[weightIndex].label = vgraph.cfg.edges[weightIndex]._cfg.label
@@ -24,7 +24,7 @@ function weightUpdate(){
   vgraph.read(currdata);
   console.log(currdata);
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
-  vgraph.cfg.edges[weightIndex]._cfg.label = "Weight: " + vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
+  vgraph.cfg.edges[weightIndex]._cfg.label = vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   document.getElementById('weightcounter').innerHTML = "Current Weight: " + parseInt(document.querySelector('#newweight').value);
 }
 
@@ -37,10 +37,10 @@ function clearGraph(){
 function match(edges, edgeinfo){
   for(var i = 0; i < edges.length; i++){
     console.log(edges[i], edgeinfo)
-    if(edges[i].source == edgeinfo.source && edges[i].target == edgeinfo.target) return false;
-    if(!isdirected && edges[i].source == edgeinfo.target && edges[i].target == edgeinfo.source) return false;
+    if(edges[i].source == edgeinfo.source && edges[i].target == edgeinfo.target) return edges[i].id;
+    if(!isdirected && edges[i].source == edgeinfo.target && edges[i].target == edgeinfo.source) return edges[i].id;
   }
-  return true;
+  return false;
 }
 
 function randomizeGraph(){
@@ -78,10 +78,10 @@ function randomizeGraph(){
         source: s,
         target: d,
         weight: 0,
-        label: 'Weight: ' + weight,
+        label: weight,
         curveOffset: 0,
       } 
-    } while (s == d && !match(data.edges, edgeinfo));
+    } while (s == d && match(data.edges, edgeinfo));
     data.edges.push(edgeinfo);
   }
   nextID = nodenum+1;
@@ -99,9 +99,9 @@ function newDirectedGraph() {
   
   vgraph.set('defaultEdge',{
       style: {
-        lineWidth: 10,
+        lineWidth: 5,
         endArrow:{
-          path: G6.Arrow.triangle(10, 15, 10),
+          path: G6.Arrow.triangle(10, 10, 10),
           d: 10,
         }
       }
@@ -115,7 +115,7 @@ function newUndirectedGraph(){
 
   vgraph.set('defaultEdge',{
       style: {
-        lineWidth: 10,
+        lineWidth: 5,
         endArrow:false
       }
     }
@@ -202,11 +202,21 @@ window.onload = function(){
             if (self.addingEdge && self.edge) {
               var edges = vgraph.save().edges;
               var edge = {source: self.edge.getModel().source, target: model.id};
-              console.log(edge, edges, match(edges, self.edge));
-              if(!match(edges, edge)){
+              if(match(edges, edge)){
                 vgraph.removeItem(self.edge);
                 instructions.innerHTML = "You cannot have double edges";
-              }else{
+              }
+              else if(edge1 = match(edges, {source: edge.target, target: edge.source})){
+                var otheredge = vgraph.findById(edge1);
+                vgraph.updateItem(self.edge, {
+                  target: model.id,
+                  type: 'quadratic'
+                });
+                vgraph.updateItem(otheredge, {
+                  type: 'quadratic'
+                });
+              }
+              else{
                 vgraph.updateItem(self.edge, {
                   target: model.id,
                 });
@@ -223,13 +233,13 @@ window.onload = function(){
               self.edge = vgraph.addItem('edge', {
                 source: model.id,
                 target: model.id,
-                label: "Weight: 0",
+                label: "0",
                 weight: 0
               });
               //EDGEWEIGHT
               weightIndex = (vgraph.cfg.edges).length - 1;
               vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = "Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
                      
               
               self.addingEdge = true;
@@ -324,20 +334,21 @@ window.onload = function(){
           onEdgeClick(ev){
             //EDGEWEIGHT2
             currdata = vgraph.save();
-            var last = vgraph.findById(currdata.edges[weightIndex].id);
-            vgraph.updateItem(last, {
-              style: {
-                stroke: "#808080"
-              }
-            });
             const self = this;
+            console.log(self.lastedge);
+            if(self.lastedge){
+              vgraph.updateItem(self.lastedge, {
+                type: self.lasttype
+              });
+            }
             const edge = ev.item;
             const graph = self.graph;
             weightIndex = vgraph.cfg.edges.indexOf(edge);
+            self.lastedge = edge;
+            self.lasttype = edge.getModel().type;
+            console.log(self.lasttype + "-dash");
             vgraph.updateItem(edge, {
-              style: {
-                stroke: "#ff0000"
-              }
+              type: self.lasttype + "-dash"
             });
             document.getElementById('weightcounter').innerHTML = "Current Weight: " + currdata.edges[weightIndex].weight.toString();
             document.getElementById('newweight').value = "";
@@ -362,6 +373,40 @@ window.onload = function(){
             });
           }
         });
+        const lineDash = [4, 2, 1, 2];
+        var registerDash = function(type){
+          G6.registerEdge(
+            type + '-dash',
+            {
+              afterDraw(cfg, group) {
+                let index = 0;
+                const shape = group.get('children')[0];
+                // Define the animation
+                shape.animate(
+                  () => {
+                    index++;
+                    if (index > 9) {
+                      index = 0;
+                    }
+                    const res = {
+                      lineDash,
+                      lineDashOffset: -index,
+                    };
+                    // Returns the configurations to be modified in this frame. Here the return value contains lineDash and lineDashOffset
+                    return res;
+                  },
+                  {
+                    repeat: true, // whether executed repeatly
+                    duration: 3000, // animation's duration
+                  },
+                );
+              },
+            },
+            type
+          );
+        }
+        registerDash('line');
+        registerDash('quadratic');
 
 
 
@@ -389,8 +434,9 @@ window.onload = function(){
             startNode: ['click-start-node', 'click-select']
           },
           defaultEdge: {
+            type: "line",
             style: {
-              lineWidth: 10,
+              lineWidth: 5,
               endarrow: false
             }
           },

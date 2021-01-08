@@ -472,11 +472,11 @@ window.onload = function(){
         var doNothing = function(){}
 
         var show = function(){
-          document.getElementById("randomform").style.display = "block";
+          document.getElementById("randomform").style["max-height"] = "300px";
         }
 
         var unshow = function(){
-          document.getElementById("randomform").style.display = "none";
+          document.getElementById("randomform").style["max-height"] = "0";
 
         }
 

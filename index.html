@@ -32,12 +32,15 @@
 		}
 
 		.dropdown-content {
-			display: none;
+			display: flex; flex-wrap: wrap;
+			max-height: 0px;
+			overflow: hidden;
 			position: absolute;
 			background-color: #f1f1f1;
 			min-width:160px;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
+  			transition: max-height .5s ease-out;
 		}
 
 		.option * {
@@ -49,9 +52,10 @@
 		}
 
 		#randomform {
-			display: none;
+			max-height: 0px;
+			overflow: hidden;
 			width: 90%;
-			padding-bottom: 5px;
+  			transition: max-height .5s ease-out;
 		}
 
 		#randomform * {
@@ -95,7 +99,7 @@
 
 		.option *:hover {background-color: #ddd;}
 
-		.dropdown:hover .dropdown-content {display: flex; flex-wrap: wrap;}
+		.dropdown:hover .dropdown-content { max-height: 500px; }
 
 		.toolbar-div:hover button {background-color: #3e8e41 !important;}
 
@@ -151,6 +155,10 @@
 			width: 50%;
 		}
 
+		#maxweight{
+			margin-bottom: 5px !important;
+		}
+
 	</style>
 	<!-- <script type="text/javascript" src="graph-algos.js"></script> -->
 
@@ -179,7 +187,7 @@
 				</div>
 				<div class="option">
 					<a id="blank" class="selected-top options-2">Blank</a>
-					<a id="random" class="options-2">Random</a>
+					<a id="random" class="options-2">Random &#9662;</a>
 				</div>
 				<form id="randomform" autocomplete="off">
 				  <label for="nodenum"># of Nodes</label>

@@ -47,6 +47,9 @@ function randomizeGraph(){
   clearGraph();
   var nodenum = parseInt(document.querySelector('#nodenum').value);
   var edgenum = parseInt(document.querySelector('#edgenum').value);
+  if(edgenum > nodenum*(nodenum-1)/2){
+    edgenum = nodenum*(nodenum-1)/2;
+  }
   var minweight = parseInt(document.querySelector('#minweight').value);
   var maxweight = parseInt(document.querySelector('#maxweight').value);
   
@@ -314,16 +317,28 @@ window.onload = function(){
           getEvents() {
             return {
               'edge:click': 'onEdgeClick', // The event is edge:click, the responsing function is onEdgeClick
+              'beforemodechange': 'modechange'
             };
           },
           // The responsing function for node:click defined in getEvents
           onEdgeClick(ev){
             //EDGEWEIGHT2
             currdata = vgraph.save();
+            var last = vgraph.findById(currdata.edges[weightIndex].id);
+            vgraph.updateItem(last, {
+              style: {
+                stroke: "#808080"
+              }
+            });
             const self = this;
             const edge = ev.item;
             const graph = self.graph;
             weightIndex = vgraph.cfg.edges.indexOf(edge);
+            vgraph.updateItem(edge, {
+              style: {
+                stroke: "#ff0000"
+              }
+            });
             document.getElementById('weightcounter').innerHTML = "Current Weight: " + currdata.edges[weightIndex].weight.toString();
             document.getElementById('newweight').value = "";
             document.getElementById('newweight').focus();
@@ -336,6 +351,15 @@ window.onload = function(){
             document.querySelector('.weightform').style.display = 'flex';              
             document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
             */
+          },
+          modechange(){
+            var last = vgraph.findById(currdata.edges[weightIndex].id);
+            if(!last) return;
+            vgraph.updateItem(last, {
+              style: {
+                stroke: "#808080"
+              }
+            });
           }
         });
 

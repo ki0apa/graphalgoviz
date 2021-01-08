@@ -15,15 +15,9 @@
 			margin: 0px;
 		}
 
-		header {
-			margin: 0;
-			padding: 0px;
-			color: white;
-			background-color: #666;
-		}
 
 		.toolbar-div button {
-			background-color: #666;
+			background-color: #3d5654;
 			color: white;
 			padding: 16px;
 			margin: 0;
@@ -81,9 +75,10 @@
 		}
 
 		#container{
-			position: absolute;
-			height: 93%;
+			position: relative;
+			height: 100%;
 			width: 100%;
+			order:2;
 		}
 
 		.selected-left{
@@ -112,100 +107,112 @@
     <script src="graph-algos.js"></script>
 
 </head>
-<body>
-	<div>
-		<form onsubmit="randomizeGraph()" id="randomgraph">
-		  <label for="nodenum">Number of Nodes</label>
-		  <input type="text" id="nodenum" placeholder="Number of nodes..">
-	  
-		  <label for="edgenum">Number of Edges</label>
-		  <input type="text" id="edgenum" placeholder="Number of edges..">
-
-		  <label for="minweight">Minimum Weight</label>
-		  <input type="text" id="minweight" placeholder="Minimum weight..">
-
-		  <label for="maxweight">Maximum Weight</label>
-		  <input type="text" id="maxweight" placeholder="Maximum weight..">
+<body id="master">
+	<div id = barbackground>
 		
-		  <input id= "submit" type="submit" value="Generate Random Graph">
-		</form>
-	  </div>
-	<header>
-		<div id="title" style="margin-left:0;">
-			<p><b>Graph Algorithm Visualizer</b></p>
-		</div>
-		<div class="dropdown toolbar-div">
-			<button class="dropbtn">New Graph &#9662;</button>
-			<div class="dropdown-content">
-				<div class="option">
-					<a id="undirected" class="selected-top options-2">Undirected</a>
-					<a id="directed" class="options-2">Directed</a>
-				</div>
-				<div class="option">
-					<a id="unweighted" class="selected-top options-2">Unweighted</a>
-					<a id="weighted" class="options-2">Weighted</a>
-				</div>
-			</div>
-		</div>
-		<div class="dropdown toolbar-div">
-			<button class="dropbtn">Choose Algorithm &#9662;</button>
-			<div class="dropdown-content">
-				<div class="option">
-					<a id="dijkstra" class="selected-top">Dijkstra's</a>
-				</div>
-				<div class="option">
-					<a id="bfs">Breadth First Search</a>
-				</div>
-				<div class="option">
-					<a id="dfs">Depth First Search</a>
-				</div>
-				<div class="option">
-					<a id="topsort">Topological Sort</a>
-				</div>
-				<div class="option">
-					<a id="mst">Minimum Spanning Tree</a>
-				</div>
-				<div class="option">
-					<a id="scc">Strongly Connected Components</a>
-				</div>
-				<div class="option">
-					<a id="maxflow">Max Flow</a>
-				</div>
-			</div>
-		</div>
-		<div class="toolbar-div">
-			<button id="runbtn">Run!</button>
-		</div>
-
-	</header>
-
-	<div id="container"></div>
-
-	<a id="instructions"></a>
-	<br>
-	<a id="arraydata"></a>
-	<br>
-	<a id="requirements"></a>
-	
-	<div id="toolbar-left">
-		<img src="imgs/Node.png" width="60px" id="NewNode" class="selected-left"></img>
-		<img src="imgs/edge.png" width="60px" id="NewEdge"></img>
-		<img src="imgs/move.png" width="60px" id="Move"></img>
-		<img src="imgs/trash.png" width="60px" id="Trash"></img>
-		<img src="imgs/trash.png" width="60px" id="Weights">Weights</img>
-		
-		<div class = "weightform">
-			<form action = "" onsubmit="weightUpdate()" id="weightform">
-				<div id = "weightcounter">
-					WEIGHT:
-				</div>
-				<input type = "text" placeholder="WEIGHT" id="newweight" display="none">
-				<button>SUBMIT</button>
-			</form>
-			
-		</div>
 	</div>
+		<div id="mainscreen">
+			<div id="topbar">
+					<div id="title">
+					</div>
+					<div class="dropdown toolbar-div">
+						<button class="dropbtn">New Graph &#9662;</button>
+						<div class="dropdown-content">
+							<div class="option">
+								<a id="undirected" class="selected-top options-2">Undirected</a>
+								<a id="directed" class="options-2">Directed</a>
+							</div>
+							<div class="option">
+								<a id="unweighted" class="selected-top options-2">Unweighted</a>
+								<a id="weighted" class="options-2">Weighted</a>
+							</div>
+						</div>
+					</div>
+					<div class="dropdown toolbar-div">
+						<button class="dropbtn">Choose Algorithm &#9662;</button>
+						<div class="dropdown-content">
+							<div class="option">
+								<a id="dijkstra" class="selected-top">Dijkstra's</a>
+							</div>
+							<div class="option">
+								<a id="bfs">Breadth First Search</a>
+							</div>
+							<div class="option">
+								<a id="dfs">Depth First Search</a>
+							</div>
+							<div class="option">
+								<a id="topsort">Topological Sort</a>
+							</div>
+							<div class="option">
+								<a id="mst">Minimum Spanning Tree</a>
+							</div>
+							<div class="option">
+								<a id="scc">Strongly Connected Components</a>
+							</div>
+							<div class="option">
+								<a id="maxflow">Max Flow</a>
+							</div>
+						</div>
+					</div>
+					<div class="toolbar-div">
+						<button id="runbtn">Run!</button>
+					</div>
+				</div>
+				<div id="container">
+					<a id="instructions"></a>
+					<br>
+					<a id="arraydata"></a>
+					<br>
+					<a id="requirements"></a>
+					<div class = "weightform">
+						<form action = "" onsubmit="weightUpdate()" id="weightform">
+							<div id = "weightcounter">
+								WEIGHT:
+							</div>
+							<input type = "text" placeholder="WEIGHT" id="newweight" display="none">
+							<button>SUBMIT</button>
+						</form>
+						
+					</div>
+				</div>
 
+
+
+		</div>
+		
+
+
+
+				<div class="vertical_bar">
+					<div id = "title">
+						GRAPH ALGORITHM VIZUALIZER
+					</div>
+					<ul class="menu" id="vertlist">
+						<li><a href="#" id="NewNode">
+							<span class="icon"><i class="fas fa-home"></i></span>
+							<span class="text">New Node</span>
+						</a></li>
+						<li><a href="#" class="active" id="NewEdge">
+							<span class="icon"><i class="fas fa-file-alt"></i></span>
+							<span class="text">New Edge</span>
+						</a></li>
+						<li><a href="#" id="Move">
+							<span class="icon"><i class="fas fa-chart-pie"></i></span>
+							<span class="text">Move Nodes</span>
+						</a></li>
+						<li><a href="#" id="Trash">
+							<span class="icon"><i class="fas fa-user"></i></span>
+							<span class="text">Delete Items</span>
+						</a></li>
+						<li><a href="#" id="Weights">
+							<span class="icon"><i class="fas fa-cog"></i></span>
+							<span class="text">Modify Weight</span>
+						</a></li>
+					</ul>
+					
+				</div>
+
+			
 
 </body>
 </html>

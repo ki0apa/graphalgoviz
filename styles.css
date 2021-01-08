@@ -8,3 +8,100 @@
     height: 200px;
     display: none;
 }
+
+#bigwrap{
+    margin-top: 100px;
+    height:100%;
+    position: relative;
+}
+
+.vertical_bar{
+	width: 250px;
+	background: #3d5654;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body, html {
+    height:100%; 
+}
+
+
+
+
+
+.vertical_bar .menu{
+	padding-left: 25px;
+}
+
+.vertical_bar .menu li a{
+	display: block;
+	padding: 15px;
+	text-transform: uppercase;
+	color: #fff;
+	letter-spacing: 2px;
+	border-top-left-radius: 25px;
+	border-bottom-left-radius: 25px;
+	margin-bottom: 1px;
+}
+
+.vertical_bar .menu li a .icon{
+	color: #c99c33;
+	width: 25px;
+    display: inline-block;
+}
+
+.vertical_bar .menu li a:hover,
+.vertical_bar .menu li a.active{
+	background: #fff;
+	color: #3d5654;
+}
+
+#vertlist{
+        list-style-type: none;
+        order: 2;
+}
+
+
+.topbar {
+    display: flex; 
+    flex-direction: row;
+    justify-content: flex-start;
+    
+
+  }
+
+  #topbar {
+    display: flex; 
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 7%;
+  }
+
+  #master {
+    display: flex; 
+    flex-direction: row;
+    justify-content: flex-start;
+    height:100%;
+    z-index: -1;
+  }
+
+  #title{
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+  }
+
+#mainscreen{
+    order: 2;
+    width: 80%;
+    height: 100%;
+}
+
+#barbackground{
+    width: 100%;
+    height: 8%;
+    background-color: #3d5654;
+    position: absolute;
+}

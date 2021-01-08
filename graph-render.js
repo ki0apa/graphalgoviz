@@ -144,7 +144,7 @@ window.onload = function(){
         function handleForm(event) { 
           event.preventDefault(); 
         } 
-        form.addEventListener('submit', handleForm);
+
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior

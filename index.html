@@ -114,6 +114,8 @@
 
 		#runbtn{
 			background-color: #4CAF50 !important;
+			margin-top: -8px;
+			height:70px;
 		}
 
 		#runbtn:hover { cursor: pointer; }
@@ -135,9 +137,6 @@
 			order:2;
 		}
 
-		.selected-left{
-			background-color: gray;
-		}
 
 		.selected-top{
 			background-color: #3e8e41 !important;
@@ -258,19 +257,19 @@
 			GRAPH ALGORITHM VIZUALIZER
 		</div>
 		<ul class="menu" id="vertlist">
-			<li><a href="#" id="NewNode">
+			<li><a href="#" id="NewNode" onclick="changeWhite('NewNode')">
 				<span class="icon"><i class="fas fa-home"></i></span>
 				<span class="text">New Node</span>
 			</a></li>
-			<li><a href="#" class="active" id="NewEdge">
+			<li><a href="#" class="active" id="NewEdge" onclick="changeWhite('NewEdge')">
 				<span class="icon"><i class="fas fa-file-alt"></i></span>
 				<span class="text">New Edge</span>
 			</a></li>
-			<li><a href="#" id="Move">
+			<li><a href="#" id="Move" onclick="changeWhite('Move')">
 				<span class="icon"><i class="fas fa-chart-pie"></i></span>
 				<span class="text">Move Nodes</span>
 			</a></li>
-			<li><a href="#" id="Trash">
+			<li><a href="#" id="Trash" onclick="changeWhite('Trash')">
 				<span class="icon"><i class="fas fa-user"></i></span>
 				<span class="text">Delete Items</span>
 			</a></li>

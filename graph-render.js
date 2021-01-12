@@ -12,7 +12,11 @@ var startNode;
 var weightIndex;
 var width;
 var height;
+var whitened = "NewNode";
 
+function changeWhite(){
+  console.log("aba");
+}
 
 function weightUpdate(){
   /*

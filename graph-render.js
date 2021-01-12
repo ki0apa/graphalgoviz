@@ -14,12 +14,21 @@ var width;
 var height;
 var whitened = "NewNode";
 
-function changeWhite(){
-  console.log("aba");
+
+function changeWhite(buttonid){
+  document.getElementById(whitened).classList.remove('active');
+  document.getElementById(buttonid).classList.add('active');
+  whitened = buttonid;
+  
 }
+
+
 
 function weightUpdate(){
   /*
+
+
+
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
@@ -146,7 +155,9 @@ function newUnweightedGraph(){
 }
 
 window.onload = function(){
+        document.getElementById(whitened).classList.add('active');
 
+        console.log(document.getElementById(whitened));
         instructions = document.getElementById("instructions");
         arraydata = document.getElementById("arraydata");
         requirements = document.getElementById("requirements");

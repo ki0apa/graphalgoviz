@@ -258,26 +258,26 @@
 		
 	<div class="vertical_bar">
 		<div id = "title">
-			GRAPH ALGORITHM VIZUALIZER
+			GRAPH ALGORITHM VISUALIZER
 		</div>
 		<ul class="menu" id="vertlist">
-			<li><a href="#" id="NewNode">
+			<li onclick="changeWhite('NewNode')"><a href="#" id="NewNode">
 				<span class="icon"><i class="fas fa-home"></i></span>
 				<span class="text">New Node</span>
 			</a></li>
-			<li><a href="#" class="active" id="NewEdge" onclick="changeWhite('NewEdge')">
-				<span class="icon"><i class="fas fa-file-alt"></i></span>
+			<li onclick="changeWhite('NewEdge')"><a href="#" id="NewEdge">
+				<span class="icon"><i class="fas fa-chart-pie"></i></span>
 				<span class="text">New Edge</span>
 			</a></li>
-			<li><a href="#" id="Move" onclick="changeWhite('Move')">
+			<li onclick="changeWhite('Move')"><a href="#" id="Move" onclick="changeWhite('Move')">
 				<span class="icon"><i class="fas fa-chart-pie"></i></span>
 				<span class="text">Move Nodes</span>
 			</a></li>
-			<li><a href="#" id="Trash" onclick="changeWhite('Trash')">
+			<li onclick="changeWhite('Trash')"><a href="#" id="Trash" onclick="changeWhite('Trash')">
 				<span class="icon"><i class="fas fa-user"></i></span>
 				<span class="text">Delete Items</span>
 			</a></li>
-			<li><a href="#" id="Weights">
+			<li onclick="changeWhite('Weights')"><a href="#" id="Weights">
 				<span class="icon"><i class="fas fa-cog"></i></span>
 				<span class="text" id="modifyweight">Modify Weight</span>
 			</a></li>

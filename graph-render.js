@@ -19,6 +19,7 @@ function changeWhite(){
 }
 
 function weightUpdate(){
+  /*
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   currdata = vgraph.save();
@@ -30,6 +31,12 @@ function weightUpdate(){
   vgraph.cfg.edges[weightIndex]._cfg.weight = parseInt(document.querySelector('#newweight').value);
   vgraph.cfg.edges[weightIndex]._cfg.label = vgraph.cfg.edges[weightIndex]._cfg.weight.toString();
   document.getElementById('weightcounter').innerHTML = "Current Weight: " + parseInt(document.querySelector('#newweight').value);
+  */
+  currdata = vgraph.save();
+  var edge = vgraph.findById(currdata.edges[weightIndex].id);
+  vgraph.updateItem(edge, {
+    label: document.querySelector('#newweight').value
+  })
 }
 
 
@@ -102,6 +109,7 @@ function newDirectedGraph() {
   clearGraph();
   
   vgraph.set('defaultEdge',{
+      type: "line",
       style: {
         lineWidth: 5,
         endArrow:{
@@ -118,6 +126,7 @@ function newUndirectedGraph(){
   clearGraph();
 
   vgraph.set('defaultEdge',{
+      type: "line",
       style: {
         lineWidth: 5,
         endArrow:false
@@ -128,10 +137,12 @@ function newUndirectedGraph(){
 
 function newWeightedGraph(){
   isweighted = true;
+  document.getElementById("modifyweight").display = "block";
 }
 
 function newUnweightedGraph(){
   isweighted = false;
+  document.getElementById("modifyweight").display = "hidden";
 }
 
 window.onload = function(){
@@ -181,7 +192,6 @@ window.onload = function(){
           onClick(ev) {
             const self = this;
             const node = ev.item;
-            console.log("E", node);  
             startNode = parseInt(node.getModel().id);
           },
         });
@@ -339,16 +349,17 @@ window.onload = function(){
             //EDGEWEIGHT2
             currdata = vgraph.save();
             const self = this;
-            console.log(self.lastedge);
             if(self.lastedge){
-              vgraph.updateItem(self.lastedge, {
+              console.log("test");
+              var le = vgraph.findById(self.lastedge)
+              vgraph.updateItem(le, {
                 type: self.lasttype
               });
             }
             const edge = ev.item;
             const graph = self.graph;
             weightIndex = vgraph.cfg.edges.indexOf(edge);
-            self.lastedge = edge;
+            self.lastedge = edge.getModel().id;
             self.lasttype = edge.getModel().type;
             console.log(self.lasttype + "-dash");
             vgraph.updateItem(edge, {
@@ -368,33 +379,32 @@ window.onload = function(){
             */
           },
           modechange(){
-            var last = vgraph.findById(currdata.edges[weightIndex].id);
-            if(!last) return;
-            vgraph.updateItem(last, {
-              style: {
-                stroke: "#808080"
-              }
-            });
+            const self = this;
+            if(self.lastedge){
+              var le = vgraph.findById(self.lastedge)
+              vgraph.updateItem(le, {
+                type: self.lasttype
+              });
+            }
           }
         });
-        const lineDash = [4, 2, 1, 2];
+        const lineDash = [4, 4, 4, 4];
         var registerDash = function(type){
           G6.registerEdge(
             type + '-dash',
             {
               afterDraw(cfg, group) {
-                let index = 0;
+                console.log("HELLO");
                 const shape = group.get('children')[0];
+                var x = 0;
                 // Define the animation
                 shape.animate(
                   () => {
-                    index++;
-                    if (index > 9) {
-                      index = 0;
-                    }
+                    var w = 10*(-x*x+2*x)+5;
+                    if(w < 5) x = 0;
+                    else x+=.015;
                     const res = {
-                      lineDash,
-                      lineDashOffset: -index,
+                      lineWidth: w
                     };
                     // Returns the configurations to be modified in this frame. Here the return value contains lineDash and lineDashOffset
                     return res;
@@ -583,7 +593,6 @@ window.onload = function(){
         var d = document.getElementById("submit")
         console.log(d);
         d.onclick = function(){
-          console.log("HE");
           if(curSelectedTop["direction"] == undirected) newUndirectedGraph();
           else newDirectedGraph();
           if(curSelectedTop["weight"] == unweighted) newUnweightedGraph();

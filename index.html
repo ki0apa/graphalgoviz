@@ -243,16 +243,6 @@
 			<a id="arraydata"></a>
 			<br>
 			<a id="requirements"></a>
-			<div class = "weightform">
-				<form action = "" onsubmit="weightUpdate()" id="weightform">
-					<div id = "weightcounter">
-						WEIGHT:
-					</div>
-					<input type = "text" placeholder="WEIGHT" id="newweight" display="none">
-					<button>SUBMIT</button>
-				</form>
-				
-			</div>
 		</div>
 	</div>
 		
@@ -280,8 +270,20 @@
 			<li onclick="changeWhite('Weights')"><a href="#" id="Weights">
 				<span class="icon"><i class="fas fa-cog"></i></span>
 				<span class="text" id="modifyweight">Modify Weight</span>
+				
+				<div class = "dropdown-content">
+					<div class = "weightform">
+						<form action = "" onsubmit="weightUpdate()" id="weightform">
+							<input type = "text" placeholder="WEIGHT" id="newweight">
+							<button>SUBMIT</button>
+						</form>
+						
+					</div>
+			</div>
+
 			</a></li>
 		</ul>
+
 		
 	</div>
 

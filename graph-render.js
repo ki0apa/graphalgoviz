@@ -269,7 +269,6 @@ window.onload = function(){
               
               self.addingEdge = true;
               document.querySelector('.weightform').style.display = 'flex';              
-              document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
 
             }
           },
@@ -376,7 +375,6 @@ window.onload = function(){
             vgraph.updateItem(edge, {
               type: self.lasttype + "-dash"
             });
-            document.getElementById('weightcounter').innerHTML = "Current Weight: " + currdata.edges[weightIndex].weight.toString();
             document.getElementById('newweight').value = "";
             document.getElementById('newweight').focus();
 

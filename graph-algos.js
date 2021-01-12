@@ -76,7 +76,7 @@ function resetGraph(){
 		if(node){
 			vgraph.updateItem(node, {
 				style:{
-					fill: "#B0C4DE"
+					fill: "#c6e5ff"
 				}
 			})		
 		}
@@ -150,11 +150,11 @@ async function algodfs(){
 function updateNodeDij(id, dist, prev, visit){
 	var node = vgraph.findById(id);
 	if(!node) return;	
-	console.log(visit ? "#ff0000" : "B0C4DE");
+	console.log(visit ? "#ff0000" : "c6e5ff");
 	vgraph.updateItem(node, {
 		label: id + "\ncost: " + (dist == inf ? "\u221e" : dist.toString()) + "\nprev:" + prev.toString(),
 		style:{
-			fill: visit ? "#ff0000" : "#B0C4DE"
+			fill: visit ? "#ff0000" : "#c6e5ff"
 		}
 	});
 }
@@ -187,7 +187,7 @@ function deleteEdge(edge1){
 	var edge = vgraph.findById(edge1.id);
 	vgraph.updateItem(edge, {
 		style:{
-			stroke: "#eaff8f"
+			stroke: "#e2e2e2"
 		}
 	});
 }

@@ -172,6 +172,8 @@
 		  appearance: none;
 		  width: 100%; /* Full-width */
 		  height: 25px; /* Specified height */
+		  margin-top: 12.5px;
+		  margin-bottom: 12.5px;
 		  background: #d3d3d3; /* Grey background */
 		  outline: none; /* Remove outline */
 		  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
@@ -204,6 +206,23 @@
 		#weightedinfo{
 			display: none;
 		}
+
+		#speedtxt{
+			color: white;
+			font-size: 16px;
+			text-align: center;
+			vertical-align: middle;
+			padding: 16px;
+			line-height: 50px; 
+		}
+
+		#speedRange{
+			text-align: center;
+			vertical-align: middle;
+			line-height: 50px; 
+		}
+
+
 
 	</style>
 	<!-- <script type="text/javascript" src="graph-algos.js"></script> -->
@@ -283,8 +302,11 @@
 				<button id="runbtn">Run!</button>
 			</div>
 			<div class="toolbar-div">
-  				<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+				<a id="speedtxt">Speed:</a>
 			</div>
+			<div class="toolbar-div">
+  				<input type="range" min="1" max="100" value="50" class="slider" id="speedRange">
+  			</div>
 		</div>
 		<div id="container">
 			<a id="instructions"></a>

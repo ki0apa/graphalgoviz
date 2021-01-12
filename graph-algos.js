@@ -10,14 +10,18 @@ var n;
 var graph;
 var edges = [];
 var edgeMap;
-var sleeptime = 3000;
+var sleeptime = 1000;
+var lastVisited;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep() {
+	var value = parseInt(document.getElementById("speedRange").value);
+	var ms = (101-value)*50;
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function getWeight(edge){
-	return parseInt(edge.label.replace("Weight: ", ""))
+	var pos = edge.label.indexOf('/');
+	return parseInt(edge.label.substring(pos+1));
 }
 
 function convertGraph(){
@@ -31,7 +35,9 @@ function convertGraph(){
 	}
 	edges = graphinfo["edges"];
 	for(var i = 0; i < graphinfo["edges"].length; i++){
-		var weight = getWeight(graphinfo["edges"][i]);
+		var weight;
+		if(isweighted) weight = getWeight(graphinfo["edges"][i]);
+		else weight = 1;
 		graph[parseInt(graphinfo["edges"][i].source)].push([parseInt(graphinfo["edges"][i].target), weight]);
 		edgeMap[parseInt(graphinfo["edges"][i].source)][parseInt(graphinfo["edges"][i].target)] = graphinfo["edges"][i];
 		if(!isdirected){
@@ -61,12 +67,21 @@ function visitNode(id){
 
 function exitNode(id){
 	var node = vgraph.findById(id);
+	console.log(id, node);
 	if(!node) return;
 	vgraph.updateItem(node, {
 		style:{
-			fill: "#ff0000"
-		}
+			fill: "#ff3300"
+		},
+		type: 'circle-animate'
 	})
+	if(lastVisited && lastVisited != id){
+		var last = vgraph.findById(lastVisited);
+		vgraph.updateItem(last, {
+			type: 'circle'
+		})
+	}
+	lastVisited = id;
 }
 
 function resetGraph(){
@@ -77,10 +92,16 @@ function resetGraph(){
 			vgraph.updateItem(node, {
 				style:{
 					fill: "#c6e5ff"
-				}
+				},
+				type: "circle",
+				comboId: false
 			})		
 		}
 	}
+	var combos = vgraph.cfg.combos;
+	for(var i = 0; i < combos.length; i++){
+		combos[i].hide();
+	}	
 }
 
 async function selectNode(message){
@@ -88,7 +109,6 @@ async function selectNode(message){
 	startNode = -1;
 	vgraph.setMode("startNode");
 	while(startNode == -1) await sleep(100);
-	console.log(startNode);
 	return startNode;
 }
 
@@ -102,9 +122,11 @@ async function algobfs(){
 	}
 	visited[s] = true;
 	visitNode(s);
+	await sleep();
 	while(q.length > 0){
 		var cur = q[0];
 		exitNode(cur);
+		await sleep();
 		updateInstructions("Looking at the neighbors of node: " + cur.toString());
 		q.shift();
 		for(var edge in graph[cur]){
@@ -115,26 +137,26 @@ async function algobfs(){
 				q.push(node[0]);
 			}
 		}
-		await sleep(sleeptime);
+		await sleep();
 	}
 	resetGraph();
 }
 
 //depth first search starting at node s
 async function dfs_recursive(s){
-	updateInstructions("Entering node: " + s.toString());
-	visitNode(s);
+	exitNode(s);
 	dfsVisited[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
-		await sleep(sleeptime);
 		updateInstructions("Looking at next neighbor of node: " + s.toString());
-		if(!dfsVisited[node[0]])
+		exitNode(s);
+		if(!dfsVisited[node[0]]){
+			await sleep();
 			await dfs_recursive(node[0]);
+		}
 	}
-	await sleep(sleeptime);
-	updateInstructions("Exit node: " + s.toString());
 	exitNode(s);
+	await sleep();
 }
 
 var dfsVisited = []
@@ -150,11 +172,10 @@ async function algodfs(){
 function updateNodeDij(id, dist, prev, visit){
 	var node = vgraph.findById(id);
 	if(!node) return;	
-	console.log(visit ? "#ff0000" : "c6e5ff");
 	vgraph.updateItem(node, {
 		label: id + "\ncost: " + (dist == inf ? "\u221e" : dist.toString()) + "\nprev:" + prev.toString(),
 		style:{
-			fill: visit ? "#ff0000" : "#c6e5ff"
+			fill: visit ? "#ff3300" : "#c6e5ff"
 		}
 	});
 }
@@ -169,7 +190,7 @@ function useEdgePerm(edge1){
 	var edge = vgraph.findById(edge1.id);
 	vgraph.updateItem(edge, {
 		style:{
-			stroke: "#ff0000"
+			stroke: "#ff3300"
 		}
 	});
 }
@@ -185,11 +206,31 @@ function useEdgeTmp(edge1){
 
 function deleteEdge(edge1){
 	var edge = vgraph.findById(edge1.id);
+	console.log(edge1);
 	vgraph.updateItem(edge, {
 		style:{
 			stroke: "#e2e2e2"
 		}
 	});
+}
+
+function resetGraphDij(){
+	for(var i = 1; i < nextID; i++){
+		var node = vgraph.findById(i);
+		if(!node) continue;
+		if(node){
+			vgraph.updateItem(node, {
+				label: i.toString(),
+				style:{
+					fill: "#c6e5ff"
+				},
+				type: "circle"
+			})		
+		}
+	}
+	for(var i = 0; i < edges.length; i++){
+		deleteEdge(edges[i]);
+	}
 }
 
 //dijkstra's starting at node s
@@ -207,12 +248,12 @@ async function algodijkstra(){
 	}
 	updateGraphDij(dist, prev, visited);
 	updateInstructions("Initializing all distances to \u221e");
-	await sleep(sleeptime);
+	await sleep();
 	dist[s] = 0;
 	updateGraphDij(dist, prev, visited);
 	updateInstructions("Setting the distance at " + s.toString() + " to 0.");
 	while(true){
-		await sleep(sleeptime);
+		await sleep();
 		var u = -1;
 		for(var i = 0; i < n; i++){
 			if(!visited[i] && (u == -1 || dist[i] < dist[u])) u = i;
@@ -220,12 +261,11 @@ async function algodijkstra(){
 		if(u == -1) break;
 		if(dist[u] == inf) break;
 		updateInstructions("Visiting a unvisited node with minimum distance: node " + u.toString());
+		exitNode(u);
 		visited[u] = true;
 		updateGraphDij(dist, prev, visited);
-		await sleep(sleeptime);
+		await sleep();
 		updateInstructions("Updating " + u.toString() + "'s neighbors' distances and \"previous node\"");
-
-
 
 		for(var x in graph[u]){
 			var node = graph[u][x];
@@ -237,13 +277,15 @@ async function algodijkstra(){
 		}
 		updateGraphDij(dist, prev, visited);
 	}
+	resetGraph();
 	t = await selectNode("Select end node to show shortest path.");
 	while(prev[t] != -1){
 		updateInstructions("Selecting edge based on the value at \"prev\"");
 		useEdgePerm(edgeMap[prev[t]][t]);
 		t = prev[t];
-		await sleep(sleeptime);
+		await sleep();
 	}
+	resetGraphDij();
 }
 
 
@@ -253,21 +295,22 @@ var topSortVisited = []
 async function dfsTopSort(s){
 	if(topSortVisited[s]) return;
 	console.log(s);
-	await sleep(sleeptime);
-	updateInstructions("Visiting node: " + s.toString());
-	visitNode(s);
 	topSortVisited[s] = true;
+	exitNode(s);
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
+		updateInstructions("Visiting node: " + s.toString());
+		exitNode(s);
 		if(!topSortVisited[node[0]]){
+			await sleep();
 			var res = await dfsTopSort(node[0]);
 		}
 	}
-	await sleep(sleeptime);
+	exitNode(s);
 	updateInstructions("Exiting: " + s.toString() + ". Add " + s.toString() + " to beginning of array");
 	topSortResult.unshift(s);
 	updateArray(topSortResult.toString());
-	exitNode(s);
+	await sleep();
 }
 
 async function algotopsort(){
@@ -279,6 +322,7 @@ async function algotopsort(){
 	updateInstructions("Perform dfs on each node!")
 
 	for(var i = 1; i < n; i++) if(!topSortVisited[i]) await dfsTopSort(i);
+	resetGraph();
 }
 
 var parent;
@@ -300,7 +344,7 @@ async function algomst(){
 		useEdgeTmp(edges[i]);
 		var a = find(parseInt(edges[i].source));
 		var b = find(parseInt(edges[i].target));
-		await sleep(sleeptime);
+		await sleep();
 		if(a != b){
 			updateInstructions("Adding edge to tree, since nodes are not connected");
 			useEdgePerm(edges[i]);
@@ -309,7 +353,7 @@ async function algomst(){
 			updateInstructions("Nodes are already connected, so do not add edge to tree");
 			deleteEdge(edges[i]);
 		}
-		await sleep(sleeptime);
+		await sleep();
 	}
 	updateInstructions("Done!");
 }
@@ -320,20 +364,22 @@ var stackSCC;
 var visitedSCC;
 
 async function dfsSCC(s, b){
-	await sleep(sleeptime);
 	updateInstructions("Visiting node: " + s.toString());
 	visitNode(s);
 	visitedSCC[s] = true;
 	for(var edge in graph[s]){
 		var node = graph[s][edge];
-		if(!visitedSCC[node[0]])
+		exitNode(s)
+		if(!visitedSCC[node[0]]){
+			await sleep();
 			await dfsSCC(node[0], b);
+		}
 	}
-	await sleep(sleeptime);
 	if(!b) updateInstructions("Adding " + s.toString() + " to stack");
 	else updateInstructions("Adding " + s.toString() + " to component");
 	exitNode(s)
 	stackSCC.push(s);
+	await sleep();
 }
 
 function reverseGraph(){
@@ -354,7 +400,7 @@ async function algoscc(){
 	for(var i = 1; i < n; i++) visitedSCC[i] = false;
 	updateInstructions("Preforming dfs on graph");
 	for(var i = 1; i < n; i++) if(!visitedSCC[i]) await dfsSCC(i, false);
-	await sleep(sleeptime);
+	await sleep();
 	resetGraph();
 	var ngraph = Array(n);
 	for(var i= 1; i < n; i++) ngraph[i] = [];
@@ -364,7 +410,7 @@ async function algoscc(){
 		}
 	}
 	graph = ngraph;
-	await sleep(sleeptime);
+	await sleep();
 	updateInstructions("reverse each edge");
 	reverseGraph();
 	visitedSCC = Array(n);
@@ -375,7 +421,7 @@ async function algoscc(){
 	for(var i = n-2; i >= 0; i--){
 		stackSCC = [];
 		if(!visitedSCC[lastStack[i]]){
-			await sleep(sleeptime);
+			await sleep();
 			updateInstructions("Performing dfs on next node in the stack: " + lastStack[i].toString());
 			await dfsSCC(lastStack[i], true);
 			combo = {id: "combo" + idCombo.toString(), nodes:[]};
@@ -395,6 +441,7 @@ async function algoscc(){
 			vgraph.render();
 		}
 	}
+	await sleep();
 	updateInstructions("Done!");
 	resetGraph();
 	reverseGraph();
@@ -443,6 +490,15 @@ function min(a, b){
 	return b;
 }
 
+function clearGraphFlow(){
+	for(var i = 0; i < edges.length; i++){
+		deleteEdge(edges[i]);
+		vgraph.updateItem(edges[i].id, {
+			label: getWeight(edges[i]).toString()
+		})
+	}
+}
+	
 async function algomaxflow(){
 	flow = Array(n);
 	for(var i = 0; i < n; i++) {
@@ -450,6 +506,9 @@ async function algomaxflow(){
 		for(var j = 0; j < n; j++){
 			flow[i][j] = 0;
 		}
+	}
+	for(var i = 0; i < edges.length; i++){
+		updateLabelEdge(edges[i].id, flow[parseInt(edges[i].source)][parseInt(edges[i].target)].toString() + "/" + getWeight(edges[i]));
 	}
 	s = await selectNode("Select source");
 	t = await selectNode("Select sink");
@@ -462,25 +521,23 @@ async function algomaxflow(){
 			next = parent[next];
 		}
 		updateInstructions("Find a valid path from source to sink");
-		await sleep(sleeptime);
+		await sleep();
 		updateInstructions("Add " + mi + " flow to edge edge on path");
 		next = t;
 		while(parent[next] != -1){
 			flow[parent[next]][next] += mi;
 			next = parent[next];
 		}
-		for(var i = 0; i < n; i++){
-			for(var j = 0; j < n; j++){
-				if(flow[i][j] > 0){
-					updateLabelEdge(edgeMap[i][j].id, flow[i][j].toString() + "/" + getWeight(edgeMap[i][j]));
-				}
-			}
+		for(var i = 0; i < edges.length; i++){
+			updateLabelEdge(edges[i].id, flow[parseInt(edges[i].source)][parseInt(edges[i].target)].toString() + "/" + getWeight(edges[i]));
 		}
-		await sleep(sleeptime);
+		await sleep();
 		next = t;
 		while(parent[next] != -1){
 			deleteEdge(edgeMap[parent[next]][next]);
 			next = parent[next];
 		}
 	}
+	await sleep();
+	clearGraphFlow();
 }

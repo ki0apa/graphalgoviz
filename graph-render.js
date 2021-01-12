@@ -70,8 +70,12 @@ function randomizeGraph(){
   if(edgenum > nodenum*(nodenum-1)/2){
     edgenum = nodenum*(nodenum-1)/2;
   }
-  var minweight = parseInt(document.querySelector('#minweight').value);
-  var maxweight = parseInt(document.querySelector('#maxweight').value);
+  var minweight = -1;
+  var maxweight = -1;
+  if(isweighted){
+    minweight = parseInt(document.querySelector('#minweight').value);
+    maxweight = parseInt(document.querySelector('#maxweight').value);
+  }
   
 
   var i;
@@ -93,14 +97,16 @@ function randomizeGraph(){
     do{
       s = Math.floor(Math.random() * (nodenum) + 1).toString();
       d = Math.floor(Math.random() * (nodenum) + 1).toString();
-      var weight = Math.floor(Math.random() * (maxweight - minweight+1) + minweight).toString();
       var edgeinfo = {
         source: s,
         target: d,
         weight: 0,
-        label: weight,
         curveOffset: 0,
       } 
+      if(isweighted){
+        var weight = Math.floor(Math.random() * (maxweight - minweight+1) + minweight).toString();
+        edgeinfo.label = weight;
+      }
     } while (s == d && match(data.edges, edgeinfo));
     data.edges.push(edgeinfo);
   }
@@ -145,13 +151,14 @@ function newUndirectedGraph(){
 }
 
 function newWeightedGraph(){
+  console.log(document.getElementById("Weights").style.display);
   isweighted = true;
-  document.getElementById("modifyweight").display = "block";
+  document.getElementById("Weights").style.display = "block";
 }
 
 function newUnweightedGraph(){
   isweighted = false;
-  document.getElementById("modifyweight").display = "hidden";
+  document.getElementById("Weights").style.display = "none";
 }
 
 window.onload = function(){
@@ -255,21 +262,28 @@ window.onload = function(){
             } else {
 
               // Add anew edge, the end node is the current node user clicks
-              self.edge = vgraph.addItem('edge', {
-                source: model.id,
-                target: model.id,
-                label: "0",
-                weight: 0
-              });
-              //EDGEWEIGHT
-              weightIndex = (vgraph.cfg.edges).length - 1;
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              var edgejson = {
+                  source: model.id,
+                  target: model.id,
+                  weight: 0
+              };
+              if(isweighted){
+                edgejson.label = "0";
+              }
+              self.edge = vgraph.addItem('edge', edgejson);
                      
               
               self.addingEdge = true;
-              document.querySelector('.weightform').style.display = 'flex';              
 
+
+              if(isweighted){
+                //EDGEWEIGHT
+                weightIndex = (vgraph.cfg.edges).length - 1;
+                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
+                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+                document.querySelector('.weightform').style.display = 'flex';              
+                document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              }
             }
           },
           // The responsing function for mousemove defined in getEvents
@@ -403,7 +417,6 @@ window.onload = function(){
             type + '-dash',
             {
               afterDraw(cfg, group) {
-                console.log("HELLO");
                 const shape = group.get('children')[0];
                 var x = 0;
                 // Define the animation
@@ -430,6 +443,32 @@ window.onload = function(){
         }
         registerDash('line');
         registerDash('quadratic');
+
+        G6.registerNode(
+          'circle-animate',
+          {
+            afterDraw(cfg, group) {
+              const shape = group.get('children')[0];
+
+              shape.animate(
+                (ratio) => {
+                  const diff = ratio <= 0.5 ? ratio * 10 : (1 - ratio) * 10;
+                  let radius = cfg.size;
+                  if (isNaN(radius)) radius = radius[0];
+                  return {
+                    r: radius / 2 + diff,
+                  };
+                },
+                {
+                  repeat: true, 
+                  duration: 1000, 
+                  easing: 'easeCubic',
+                },
+              );
+            },
+          },
+          'circle',
+        );
 
 
 
@@ -564,13 +603,20 @@ window.onload = function(){
 
         var doNothing = function(){}
 
-        var show = function(){
+        var showForm = function(){
           document.getElementById("randomform").style["max-height"] = "300px";
         }
 
-        var unshow = function(){
+        var unshowForm = function(){
           document.getElementById("randomform").style["max-height"] = "0";
+        }
 
+        var showWeight = function(){
+          document.getElementById("weightedinfo").style.display = "block";
+        }
+
+        var unshowWeight = function(){
+          document.getElementById("weightedinfo").style.display = "none";
         }
 
         const directed = document.getElementById('directed');
@@ -578,13 +624,13 @@ window.onload = function(){
         const undirected = document.getElementById('undirected');
         undirected.onclick = topSelectorOnClickType(doNothing, "direction", undirected);
         const weighted = document.getElementById('weighted');
-        weighted.onclick = topSelectorOnClickType(doNothing, "weight", weighted);
+        weighted.onclick = topSelectorOnClickType(showWeight, "weight", weighted);
         const unweighted = document.getElementById('unweighted');
-        unweighted.onclick = topSelectorOnClickType(doNothing, "weight", unweighted);
+        unweighted.onclick = topSelectorOnClickType(unshowWeight, "weight", unweighted);
         const blank = document.getElementById('blank');
-        blank.onclick = topSelectorOnClickType(unshow, "type", blank);
+        blank.onclick = topSelectorOnClickType(unshowForm, "type", blank);
         const random = document.getElementById('random');
-        random.onclick = topSelectorOnClickType(show, "type", random);
+        random.onclick = topSelectorOnClickType(showForm, "type", random);
         const dijkstra = document.getElementById('dijkstra');
         dijkstra.onclick = topSelectorOnClickType(selectAlgorithm("dijkstra"), "algo",  dijkstra);
         const bfs = document.getElementById('bfs');

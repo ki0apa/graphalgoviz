@@ -136,13 +136,14 @@ function newUndirectedGraph(){
 }
 
 function newWeightedGraph(){
+  console.log(document.getElementById("Weights").style.display);
   isweighted = true;
-  document.getElementById("modifyweight").display = "block";
+  document.getElementById("Weights").style.display = "block";
 }
 
 function newUnweightedGraph(){
   isweighted = false;
-  document.getElementById("modifyweight").display = "hidden";
+  document.getElementById("Weights").style.display = "none";
 }
 
 window.onload = function(){
@@ -244,22 +245,26 @@ window.onload = function(){
             } else {
 
               // Add anew edge, the end node is the current node user clicks
-              self.edge = vgraph.addItem('edge', {
-                source: model.id,
-                target: model.id,
-                label: "0",
-                weight: 0
-              });
-              //EDGEWEIGHT
-              weightIndex = (vgraph.cfg.edges).length - 1;
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
-              vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              var edgejson = {
+                  source: model.id,
+                  target: model.id,
+                  weight: 0
+              };
+              if(isweighted){
+                edgejson.label = "0";
+              }
+              self.edge = vgraph.addItem('edge', edgejson);
                      
               
               self.addingEdge = true;
-              document.querySelector('.weightform').style.display = 'flex';              
-              document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
-
+              if(isweighted){
+                //EDGEWEIGHT
+                weightIndex = (vgraph.cfg.edges).length - 1;
+                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
+                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+                document.querySelector('.weightform').style.display = 'flex';              
+                document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+              }
             }
           },
           // The responsing function for mousemove defined in getEvents
@@ -394,7 +399,6 @@ window.onload = function(){
             type + '-dash',
             {
               afterDraw(cfg, group) {
-                console.log("HELLO");
                 const shape = group.get('children')[0];
                 var x = 0;
                 // Define the animation
@@ -421,6 +425,32 @@ window.onload = function(){
         }
         registerDash('line');
         registerDash('quadratic');
+
+        G6.registerNode(
+          'circle-animate',
+          {
+            afterDraw(cfg, group) {
+              const shape = group.get('children')[0];
+
+              shape.animate(
+                (ratio) => {
+                  const diff = ratio <= 0.5 ? ratio * 10 : (1 - ratio) * 10;
+                  let radius = cfg.size;
+                  if (isNaN(radius)) radius = radius[0];
+                  return {
+                    r: radius / 2 + diff,
+                  };
+                },
+                {
+                  repeat: true, 
+                  duration: 1000, 
+                  easing: 'easeCubic',
+                },
+              );
+            },
+          },
+          'circle',
+        );
 
 
 

@@ -7,12 +7,9 @@
 	<title>Graph Visualizer</title>
 	<style type="text/css">
 
-		* {
-			box-sizing: border-box;
-		}
-
-		body{
-			margin: 0px;
+		#topbar{
+			padding: 0;
+			margin: 0;
 		}
 
 
@@ -31,10 +28,16 @@
 			overflow: hidden;
 			position: absolute;
 			background-color: #f1f1f1;
-			min-width:160px;
+			min-width:250px;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
   			transition: max-height .5s ease-out;
+		}
+
+		.option{
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
 		}
 
 		.option * {
@@ -114,8 +117,8 @@
 
 		#runbtn{
 			background-color: #4CAF50 !important;
-			margin-top: -8px;
-			height:70px;
+			display: flex;
+			height: 100%;
 		}
 
 		#runbtn:hover { cursor: pointer; }
@@ -131,10 +134,14 @@
 		}
 
 		#container{
-			position: relative;
+    		display: flex; 
+    		flex-direction: row;
+		    justify-content: flex-start;
+		    order: 3;
 			height: 100%;
 			width: 100%;
-			order:2;
+		    padding: 0;
+		    margin: 0;
 		}
 
 
@@ -160,6 +167,44 @@
 			display: none;
 		}
 
+		.slider {
+		  -webkit-appearance: none;  /* Override default CSS styles */
+		  appearance: none;
+		  width: 100%; /* Full-width */
+		  height: 25px; /* Specified height */
+		  background: #d3d3d3; /* Grey background */
+		  outline: none; /* Remove outline */
+		  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+		  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+		  transition: opacity .2s;
+		}
+
+		/* Mouse-over effects */
+		.slider:hover {
+		  opacity: 1; /* Fully shown on mouse-over */
+		}
+
+		/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+		.slider::-webkit-slider-thumb {
+		  -webkit-appearance: none; /* Override default look */
+		  appearance: none;
+		  width: 25px; /* Set a specific slider handle width */
+		  height: 25px; /* Slider handle height */
+		  background: #4CAF50; /* Green background */
+		  cursor: pointer; /* Cursor on hover */
+		}
+
+		.slider::-moz-range-thumb {
+		  width: 25px; /* Set a specific slider handle width */
+		  height: 25px; /* Slider handle height */
+		  background: #4CAF50; /* Green background */
+		  cursor: pointer; /* Cursor on hover */
+		}
+
+		#weightedinfo{
+			display: none;
+		}
+
 	</style>
 	<!-- <script type="text/javascript" src="graph-algos.js"></script> -->
 
@@ -169,11 +214,8 @@
 
 </head>
 <body id="master">
-	<div id = barbackground>
-	</div>
 	<div id="mainscreen">
 		<div id="topbar">
-			<div id="title"></div>
 			<div class="dropdown toolbar-div">
 				<button class="dropbtn">New Graph &#9662;</button>
 				<div class="dropdown-content">
@@ -190,17 +232,21 @@
 						<a id="random" class="options-2">Random &#9662;</a>
 					</div>
 					<form id="randomform" autocomplete="off">
-					  <label for="nodenum"># of Nodes</label>
-					  <input type="text" id="nodenum">
-				  		
-					  <label for="edgenum"># of Edges</label>
-					  <input type="text" id="edgenum">
+						<div id="unweightedinfo">
+						  <label for="nodenum"># of Nodes</label>
+						  <input type="text" id="nodenum">
+					  		
+						  <label for="edgenum"># of Edges</label>
+						  <input type="text" id="edgenum">
+						</div>
 
-					  <label for="minweight">Min Weight</label>
-					  <input type="text" id="minweight">
+					 	<div id="weightedinfo">
+						  <label for="minweight">Min Weight</label>
+						  <input type="text" id="minweight">
 
-					  <label for="maxweight">Max Weight</label>
-					  <input type="text" id="maxweight">
+						  <label for="maxweight">Max Weight</label>
+						  <input type="text" id="maxweight">
+						</div>
 					</form>
 					<div id="submit">
 						<a>Submit</a>
@@ -235,6 +281,9 @@
 			</div>
 			<div class="toolbar-div">
 				<button id="runbtn">Run!</button>
+			</div>
+			<div class="toolbar-div">
+  				<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
 			</div>
 		</div>
 		<div id="container">

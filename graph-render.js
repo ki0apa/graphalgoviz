@@ -61,8 +61,12 @@ function randomizeGraph(){
   if(edgenum > nodenum*(nodenum-1)/2){
     edgenum = nodenum*(nodenum-1)/2;
   }
-  var minweight = parseInt(document.querySelector('#minweight').value);
-  var maxweight = parseInt(document.querySelector('#maxweight').value);
+  var minweight = -1;
+  var maxweight = -1;
+  if(isweighted){
+    minweight = parseInt(document.querySelector('#minweight').value);
+    maxweight = parseInt(document.querySelector('#maxweight').value);
+  }
   
 
   var i;
@@ -84,14 +88,16 @@ function randomizeGraph(){
     do{
       s = Math.floor(Math.random() * (nodenum) + 1).toString();
       d = Math.floor(Math.random() * (nodenum) + 1).toString();
-      var weight = Math.floor(Math.random() * (maxweight - minweight+1) + minweight).toString();
       var edgeinfo = {
         source: s,
         target: d,
         weight: 0,
-        label: weight,
         curveOffset: 0,
       } 
+      if(isweighted){
+        var weight = Math.floor(Math.random() * (maxweight - minweight+1) + minweight).toString();
+        edgeinfo.label = weight;
+      }
     } while (s == d && match(data.edges, edgeinfo));
     data.edges.push(edgeinfo);
   }
@@ -585,13 +591,20 @@ window.onload = function(){
 
         var doNothing = function(){}
 
-        var show = function(){
+        var showForm = function(){
           document.getElementById("randomform").style["max-height"] = "300px";
         }
 
-        var unshow = function(){
+        var unshowForm = function(){
           document.getElementById("randomform").style["max-height"] = "0";
+        }
 
+        var showWeight = function(){
+          document.getElementById("weightedinfo").style.display = "block";
+        }
+
+        var unshowWeight = function(){
+          document.getElementById("weightedinfo").style.display = "none";
         }
 
         const directed = document.getElementById('directed');
@@ -599,13 +612,13 @@ window.onload = function(){
         const undirected = document.getElementById('undirected');
         undirected.onclick = topSelectorOnClickType(doNothing, "direction", undirected);
         const weighted = document.getElementById('weighted');
-        weighted.onclick = topSelectorOnClickType(doNothing, "weight", weighted);
+        weighted.onclick = topSelectorOnClickType(showWeight, "weight", weighted);
         const unweighted = document.getElementById('unweighted');
-        unweighted.onclick = topSelectorOnClickType(doNothing, "weight", unweighted);
+        unweighted.onclick = topSelectorOnClickType(unshowWeight, "weight", unweighted);
         const blank = document.getElementById('blank');
-        blank.onclick = topSelectorOnClickType(unshow, "type", blank);
+        blank.onclick = topSelectorOnClickType(unshowForm, "type", blank);
         const random = document.getElementById('random');
-        random.onclick = topSelectorOnClickType(show, "type", random);
+        random.onclick = topSelectorOnClickType(showForm, "type", random);
         const dijkstra = document.getElementById('dijkstra');
         dijkstra.onclick = topSelectorOnClickType(selectAlgorithm("dijkstra"), "algo",  dijkstra);
         const bfs = document.getElementById('bfs');

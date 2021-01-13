@@ -117,8 +117,6 @@ body, html {
   order : 4;
   background-color:rgba(114, 166, 201, .3);
   color: black;
-
-
 }
 
 #algorithm{
@@ -143,5 +141,12 @@ body, html {
   margin-top: 10px;
   margin-bottom: -15px;
   width: 20%;
+}
 
+#instructions1{
+    line-height: 20px;
+    height: 40px;
+    display: inline-block;
+    text-decoration: none;
+    margin-bottom: 10px;
 }

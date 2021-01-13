@@ -487,7 +487,7 @@ window.onload = function(){
 
 
         width = container.scrollWidth;
-        height = (container.scrollHeight || 500) - 30;
+        height = (container.scrollHeight || 500);
         vgraph = new G6.Graph({
           container: 'container',
           width,
@@ -695,7 +695,15 @@ window.onload = function(){
         algotype = algobfs;
 
         const run = document.getElementById("runbtn");
-        run.onclick = function(){ convertGraph(); algotype();};
+        var toShow = document.getElementsByClassName("toShow")
+        run.onclick = async function(){ 
+          run.style.display = "none";
+          for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "inline-block";
+          convertGraph(); 
+          await algotype();
+          run.style.display = "flex";
+          for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "none";
+        };
 
         
 
@@ -706,11 +714,10 @@ window.onload = function(){
           graph.setMode(value);
         });*/
 
-        if (typeof window !== 'undefined')
-          window.onresize = () => {
+          container.onresize = () => {
             if (!vgraph || vgraph.get('destroyed')) return;
             if (!container || !container.scrollWidth || !container.scrollHeight) return;
-            vgraph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+            vgraph.changeSize(container.scrollWidth, container.scrollHeight);
           };
 
       }

@@ -289,6 +289,31 @@ async function algodijkstra(){
 }
 
 
+var dagVisited = [];
+function DAGdfs(s){
+	for(var edge in graph[s]){
+		var node = graph[s][edge];
+		if(dagVisited[node[0]]){
+			return false;
+		}else{
+			dagVisited[node[0]] = true;
+			return DAGdfs(node[0]);
+		}
+	}
+	return true;
+}
+
+function isDAG(){
+	if(!isdirected) return false;
+	for(var i = 1; i < n; i++){
+		dagVisited = Array(n)
+		for(var j = 0; j < n; j++) dagVisited[j] = false;
+		if(!DAGdfs(i)) return false;
+	}
+	return true;
+}
+
+
 //topological sort
 var topSortResult = [];
 var topSortVisited = []
@@ -314,6 +339,10 @@ async function dfsTopSort(s){
 }
 
 async function algotopsort(){
+	if(!isDAG()){ 
+		console.log("NOT DAG");
+		return;
+	}
 	topSortResult = [];
 	topSortVisited = Array(n);
 	for(var i = 0; i < n; i++){
@@ -334,6 +363,7 @@ function comparefunc(a, b){
 
 //minimum spanning tree
 async function algomst(){
+	if(!isweighted || isdirected) return;
 	parent = Array(edges.length);
 	for(var i = 0; i < edges.length; i++){
 		parent[i] = i;
@@ -356,6 +386,9 @@ async function algomst(){
 		await sleep();
 	}
 	updateInstructions("Done!");
+	for(var i = 0; i < edges.length; i++){
+		deleteEdge(edges[i]);
+	}
 }
 
 //strongly connected components
@@ -395,6 +428,7 @@ function reverseGraph(){
 }
 
 async function algoscc(){
+	if(!isdirected) return;
 	stackSCC = [];
 	visitedSCC = Array(n);
 	for(var i = 1; i < n; i++) visitedSCC[i] = false;
@@ -500,6 +534,7 @@ function clearGraphFlow(){
 }
 	
 async function algomaxflow(){
+	if(!isdirected) return;
 	flow = Array(n);
 	for(var i = 0; i < n; i++) {
 		flow[i] = Array(n);

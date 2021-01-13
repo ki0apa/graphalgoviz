@@ -169,11 +169,6 @@ window.onload = function(){
         arraydata = document.getElementById("arraydata");
         requirements = document.getElementById("requirements");
 
-        var forma = document.getElementById("weightform");
-        function handleForm(event) { 
-          event.preventDefault(); 
-        } 
-        forma.addEventListener('submit', handleForm);
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
           // Set the events and the corresponding responsing function for this behavior
@@ -253,8 +248,10 @@ window.onload = function(){
                   target: model.id,
                 });
               }
-              document.getElementById('newweight').value = "";
-              document.getElementById('newweight').focus();
+              if(isweighted){
+                document.getElementById('newweight').value = "";
+                document.getElementById('newweight').focus();
+              }
 
 
               self.edge = null;
@@ -280,9 +277,7 @@ window.onload = function(){
                 //EDGEWEIGHT
                 weightIndex = (vgraph.cfg.edges).length - 1;
                 vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
-                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
-                document.querySelector('.weightform').style.display = 'flex';              
-                document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
+                vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();          
               }
             }
           },
@@ -389,8 +384,10 @@ window.onload = function(){
             vgraph.updateItem(edge, {
               type: self.lasttype + "-dash"
             });
-            document.getElementById('newweight').value = "";
-            document.getElementById('newweight').focus();
+            if(isweighted){
+              document.getElementById('newweight').value = "";
+              document.getElementById('newweight').focus();
+            }
 
             // The position where the mouse clicks
             /*
@@ -516,9 +513,12 @@ window.onload = function(){
         var leftSelectorOnClick = function(type, obj){
           return function(){
             vgraph.setMode(type);
-            curSelectedLeft.classList.remove("selected-left");
-            obj.classList.add("selected-left");
-            curSelectedLeft = obj;
+            if((type == "weight" || type == "addEdge") && isweighted){
+              console.log(document.getElementById("weightform"));
+              document.getElementById("weightform").style.maxHeight = "50px";
+            }else{
+              document.getElementById("weightform").style.maxHeight = "0";
+            }
           }
         }
 

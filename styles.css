@@ -98,3 +98,20 @@ body, html {
     background-color: #3d5654;
     position: absolute;
 }
+
+#container{
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+  order: 3;
+  padding: 0;
+  height:10px;
+  width: 10px;
+  margin: auto;
+}
+
+
+#information{
+  order : 4;
+  margin-left: 10px ;
+}

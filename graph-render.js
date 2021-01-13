@@ -282,7 +282,6 @@ window.onload = function(){
                 vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight = 0;
                 vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.label = vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
                 document.querySelector('.weightform').style.display = 'flex';              
-                document.getElementById('weightcounter').innerHTML = "Current Weight: " + vgraph.cfg.edges[(vgraph.cfg.edges).length - 1]._cfg.weight.toString();
               }
             }
           },
@@ -550,7 +549,7 @@ window.onload = function(){
         algomap = {
           dijkstra: {
             func: algodijkstra,
-            name: "Dijksta's algorithm",
+            name: "Dijkstra's algorithm",
             description: "Algorithm for finding shortest path between nodes in a graph.",
             requirements: "Weighted graph recommended",
           },

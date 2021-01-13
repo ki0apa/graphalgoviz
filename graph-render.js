@@ -131,7 +131,13 @@ function newDirectedGraph() {
           path: G6.Arrow.triangle(10, 10, 10),
           d: 10,
         }
-      }
+      },
+      labelCfg:{
+        style:{
+          fontFamily: "Garamond",
+          fontSize: 15
+        }
+      },
     }
   );
 }
@@ -145,6 +151,12 @@ function newUndirectedGraph(){
       style: {
         lineWidth: 5,
         endArrow:false
+      },
+      labelCfg:{
+        style:{
+          fontFamily: "Garamond",
+          fontSize: 15
+        }
       }
     }
   );
@@ -231,7 +243,7 @@ window.onload = function(){
               var edge = {source: self.edge.getModel().source, target: model.id};
               if(match(edges, edge)){
                 vgraph.removeItem(self.edge);
-                instructions.innerHTML = "You cannot have double edges";
+                instructions1.innerHTML = "You cannot have double edges";
               }
               else if(edge1 = match(edges, {source: edge.target, target: edge.source})){
                 var otheredge = vgraph.findById(edge1);
@@ -494,10 +506,25 @@ window.onload = function(){
           },
           defaultEdge: {
             type: "line",
+            labelCfg:{
+              style:{
+                fontFamily: "Garamond",
+                fontSize: 15
+              }
+            },
             style: {
               lineWidth: 5,
               endarrow: false
             }
+          },
+          defaultNode:{
+            labelCfg:{
+                style:{
+                  fontFamily: "Garamond",
+                  fontSize: 20,
+                  fill: '#000'
+                }
+              }
           },
           defaultCombo: {
             type: 'circle',

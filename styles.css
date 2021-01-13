@@ -58,8 +58,10 @@ body, html {
         list-style-type: none;
         order: 2;
         font-size: 95%;
+        margin-left: -20px;
 
 }
+
 
   #topbar {
     display: flex; 
@@ -108,7 +110,6 @@ body, html {
   padding: 0;
   height:100%;
   width: 100%;
-  margin: auto;
 }
 
 
@@ -133,4 +134,14 @@ body, html {
   color: white;
   margin-top: auto;
   margin-bottom: 30px;
+}
+
+#logo{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: -15px;
+  width: 20%;
+
 }

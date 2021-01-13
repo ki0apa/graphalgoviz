@@ -4,7 +4,9 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="styles.css">
-	<title>Graph Visualizer</title>
+	<script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
+	
+	<title> Graph Visualizer</title>
 	<style type="text/css">
 
 		#topbar{
@@ -331,6 +333,7 @@
   			</div>
 		</div>
 		<a id="algorithm">
+			&#10240;
 		</a>
 		<div id="container">
 		</div>
@@ -345,29 +348,30 @@
 	</div>
 		
 	<div class="vertical_bar">
+		<img src="imgs/algorithm.png" id="logo"></img>
 		<div id = "title">
 			GRAPH ALGORITHM VISUALIZER
 		</div>
 		<ul class="menu" id="vertlist">
-			<li onclick="changeWhite('NewNode')"><a href="#" id="NewNode">
-				<span class="icon"><i class="fas fa-home"></i></span>
+			<li onclick="changeWhite('NewNode')"><a  id="NewNode">
+				<i class="fas fa-plus-circle"></i>
 				<span class="text">New Node</span>
 			</a></li>
-			<li onclick="changeWhite('NewEdge')"><a href="#" id="NewEdge">
-				<span class="icon"><i class="fas fa-chart-pie"></i></span>
+			<li onclick="changeWhite('NewEdge')"><a  id="NewEdge">
+				<i class="fas fa-bezier-curve"></i>
 				<span class="text">New Edge</span>
 			</a></li>
-			<li onclick="changeWhite('Move')"><a href="#" id="Move" onclick="changeWhite('Move')">
-				<span class="icon"><i class="fas fa-chart-pie"></i></span>
+			<li onclick="changeWhite('Move')"><a  id="Move" onclick="changeWhite('Move')">
+				<i class="fas fa-arrows-alt"></i>
 				<span class="text">Move Nodes</span>
 			</a></li>
-			<li onclick="changeWhite('Trash')"><a href="#" id="Trash" onclick="changeWhite('Trash')">
-				<span class="icon"><i class="fas fa-user"></i></span>
+			<li onclick="changeWhite('Trash')"><a id="Trash" onclick="changeWhite('Trash')">
+				<i class="far fa-trash-alt"></i>
 				<span class="text">Delete Items</span>
 			</a></li>
-			<li onclick="changeWhite('Weights')"><a href="#" id="Weights">
-				<span class="icon"><i class="fas fa-cog"></i></span>
-				<span class="text" id="modifyweight">Modify Weight &#9662;</span>
+			<li onclick="changeWhite('Weights')"><a id="Weights">
+				<i class="fas fa-balance-scale"></i>
+				<span class="text" id="modifyweight">Modify Weight</span>
 			</a></li>
 			<div id="weightform">
 				<form action = "" onsubmit="weightUpdate()" autocomplete="off">
@@ -376,9 +380,9 @@
 			</div>
 		</ul>
 		<div id="happening">
-			Algorithm Details:
+			Algorithm Details &#8594;
 		</div>
-		<img id="arrow" src="imgs/arrow.png" alt="ARROW">
+
 
 
 		

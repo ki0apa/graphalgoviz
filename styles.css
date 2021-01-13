@@ -15,8 +15,8 @@
 }
 
 .vertical_bar{
+	background: #72a6c9;
 	width: 250px;
-	background: #3d5654;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -64,7 +64,7 @@ body, html {
     display: flex; 
     flex-direction: row;
     justify-content: flex-start;
-    background-color: #3d5654;
+    background-color: #72a6c9;
     padding: 0;
     margin: 0;
     width: 100%;
@@ -113,5 +113,15 @@ body, html {
 
 #information{
   order : 4;
-  margin-left: 10px ;
+  background-color:rgba(114, 166, 201, .3);
+  color: black;
+
+
+}
+
+#instructions{
+  text-align: center;
+  background-color:rgba(114, 166, 201, .3);
+  color: black;
+
 }

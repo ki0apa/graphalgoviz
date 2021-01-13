@@ -57,6 +57,7 @@ body, html {
 #vertlist{
         list-style-type: none;
         order: 2;
+        font-size: 95%;
 
 }
 
@@ -105,8 +106,8 @@ body, html {
   justify-content: flex-start;
   order: 3;
   padding: 0;
-  height:10px;
-  width: 10px;
+  height:100%;
+  width: 100%;
   margin: auto;
 }
 
@@ -124,4 +125,12 @@ body, html {
   background-color:rgba(114, 166, 201, .3);
   color: black;
 
+}
+
+#happening{
+  order:5;
+  text-align: center;
+  color: white;
+  margin-top: auto;
+  margin-bottom: 30px;
 }

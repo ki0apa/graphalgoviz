@@ -613,10 +613,12 @@ window.onload = function(){
 
         var showWeight = function(){
           document.getElementById("weightedinfo").style.display = "block";
+
         }
 
         var unshowWeight = function(){
           document.getElementById("weightedinfo").style.display = "none";
+
         }
 
         const directed = document.getElementById('directed');

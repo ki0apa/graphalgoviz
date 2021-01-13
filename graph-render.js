@@ -5,9 +5,9 @@ var algotype;
 var isdirected = false;
 var isweighted = false;
 var currdata;
-var instructions;
-var arraydata;
-var requirements;
+var algorithm;
+var instrutions1;
+var instrutions2;
 var startNode;
 var weightIndex;
 var width;
@@ -165,9 +165,9 @@ window.onload = function(){
         document.getElementById(whitened).classList.add('active');
 
         console.log(document.getElementById(whitened));
-        instructions = document.getElementById("instructions");
-        arraydata = document.getElementById("arraydata");
-        requirements = document.getElementById("requirements");
+        algorithm = document.getElementById("algorithm");
+        instructions1 = document.getElementById("instructions1");
+        instructions2 = document.getElementById("instructions2");
 
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
@@ -551,43 +551,43 @@ window.onload = function(){
           dijkstra: {
             func: algodijkstra,
             name: "Dijkstra's algorithm",
-            description: "Algorithm for finding shortest path between nodes in a graph.",
-            requirements: "Weighted graph recommended",
+            description: "Algorithm for finding shortest path between nodes in a graph. <a href=\"https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm\">Learn more</a>",
+            requirements: "Weighted graph recommended.",
           },
           bfs: {
             func: algobfs,
             name: "Breadth First Search",
-            description: "An algorithm for traversing a graph.",
+            description: "An algorithm for traversing a graph. <a href=\"https://en.wikipedia.org/wiki/Breadth-first_search\">Learn more</a>",
             requirements: "None, works on any graph",
           },
           dfs:{
             func: algodfs,
             name: "Depth First Search",
-            description: "An algorithm for traversing a graph.",
+            description: "An algorithm for traversing a graph. <a href=\"https://en.wikipedia.org/wiki/Depth-first_search\">Learn more</a>",
             requirements: "None, works on any graph",
           },
           topsort:{
             func: algotopsort,
             name: "Topological Sort",
-            description: "Sorts nodes such that if an edge exists from u to v, u comes before v in the array.",
+            description: "Sorts nodes such that if an edge exists from u to v, u comes before v in the array. <a href=\"https://en.wikipedia.org/wiki/Topological_sorting\">Learn more</a>",
             requirements: "Must be a DAG (directed acyclic graph)",
           },
           mst:{
             func: algomst,
             name: "Minimum Spanning Tree",
-            description: "Selects a subset of edges such that the resulting graph is a tree and the sum of the weights of the edges in minimized",
+            description: "Selects a subset of edges such that the resultant graph is a tree and the sum of the weights of the edges is minimized. <a href=\"https://en.wikipedia.org/wiki/Minimum_spanning_tree\">Learn more</a>",
             requirements: "Weight undirected graph",
           },
           scc:{
             func: algoscc,
             name: "Strongly Connected Components",
-            description: "A strongly connected graph is a graph where every vertex is reachable from every other vertex. This algorithm divides the graph into strongly connected components.",
+            description: "A strongly connected graph is a graph where every vertex is reachable from every other vertex. This algorithm divides the graph into strongly connected components. <a href=\"https://en.wikipedia.org/wiki/Strongly_connected_component\">Learn more</a>",
             requirements: "Directed graph",
           },
           maxflow:{
             func: algomaxflow,
             name: "Maximum Flow/Minimum Cut",
-            description: "Each edge is assigned a \"flow\" up to the edges capacity (weight). All incoming flow needs to equal all outcoming flow on a node. Calculates the maximum flow from a source node to a sink node.",
+            description: "Each edge is assigned a \"flow\" up to the edges capacity (weight). All incoming flow needs to equal all outcoming flow on a node. Calculates the maximum flow from a source node to a sink node. <a href=\"https://en.wikipedia.org/wiki/Maximum_flow_problem\">Learn more</a>",
             requirements: "Directed graph",
           }
         };
@@ -595,9 +595,9 @@ window.onload = function(){
         var selectAlgorithm = function(name){
           return function(){
             algotype = algomap[name].func;
-            instructions.innerHTML = "Name: " + algomap[name].name; 
-            arraydata.innerHTML = "Description: " + algomap[name].description;
-            requirements.innerHTML =  "Requirements: " + algomap[name].requirements;
+            algorithm.innerHTML = algomap[name].name; 
+            instructions1.innerHTML = "Description: " + algomap[name].description;
+            instructions2.innerHTML =  "Requirements: " + algomap[name].requirements;
           }
         }
 

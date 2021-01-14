@@ -703,13 +703,13 @@ window.onload = function(){
         run.onclick = async function(){ 
           run.style.display = "none";
           for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "inline-block";
-          left.style.display = "none";
-          right.style.display = "none";
+          left.style.visibility = "hidden";
+          right.style.visibility = "hidden";
           convertGraph(); 
           await algotype();
           run.style.display = "flex";
           for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "none";
-          left.style.display = "inline";
+          left.style.visibility = "visible";
         };
 
         

@@ -27,15 +27,15 @@ function updatePast(){
 
 function goback(){
 	ind--;
-	if(ind == 0) left.style.display = "none";
-	right.style.display = "inline";
+	if(ind == 0) left.style.visibility = "hidden";
+	right.style.visibility = "visible";
 	updatePast();
 }
 
 function goforward(){
 	ind++;
-	if(ind == savedGraphs.length-1) right.style.display = "none";
-	left.style.display = "inline";
+	if(ind == savedGraphs.length-1) right.style.visibility = "hidden";
+	left.style.visibility = "visible";
 	updatePast();
 }
 

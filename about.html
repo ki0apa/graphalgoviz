@@ -272,106 +272,16 @@
 <body id="master">
 	<div id="mainscreen">
 		<div id="topbar">
-			<div class="dropdown toolbar-div">
-				<button class="dropbtn">New Graph &#9662;</button>
-				<div class="dropdown-content">
-					<div class="option">
-						<a id="undirected" class="selected-top options-2">Undirected</a>
-						<a id="directed" class="options-2">Directed</a>
-					</div>
-					<div class="option">
-						<a id="unweighted" class="selected-top options-2">Unweighted</a>
-						<a id="weighted" class="options-2">Weighted</a>
-					</div>
-					<div class="option">
-						<a id="blank" class="selected-top options-2">Blank</a>
-						<a id="random" class="options-2">Random &#9662;</a>
-					</div>
-					<form id="randomform" autocomplete="off">
-						<div id="unweightedinfo">
-						  <label for="nodenum"># of Nodes</label>
-						  <input type="text" id="nodenum">
-					  		
-						  <label for="edgenum"># of Edges</label>
-						  <input type="text" id="edgenum">
-						</div>
-
-					 	<div id="weightedinfo">
-						  <label for="minweight">Min Weight</label>
-						  <input type="text" id="minweight">
-
-						  <label for="maxweight">Max Weight</label>
-						  <input type="text" id="maxweight">
-						</div>
-					</form>
-					<div id="submit">
-						<a>Submit</a>
-					</div>
-				</div>
-			</div>
-			<div class="dropdown toolbar-div">
-				<button class="dropbtn">Choose Algorithm &#9662;</button>
-				<div class="dropdown-content">
-					<div class="option">
-						<a id="dijkstra" class="selected-top">Dijkstra's</a>
-					</div>
-					<div class="option">
-						<a id="bfs">Breadth First Search</a>
-					</div>
-					<div class="option">
-						<a id="dfs">Depth First Search</a>
-					</div>
-					<div class="option">
-						<a id="topsort">Topological Sort</a>
-					</div>
-					<div class="option">
-						<a id="mst">Minimum Spanning Tree</a>
-					</div>
-					<div class="option">
-						<a id="scc">Strongly Connected Components</a>
-					</div>
-					<div class="option">
-						<a id="maxflow">Max Flow</a>
-					</div>
-				</div>
-			</div>
 			<div class="toolbar-div">
-				<button id="runbtn">Run!</button>
-			</div>
-			<div class="toShow toolbar-div">
-				<button id="stopbtn" onclick="stopped=true;">Stop!</button>
-			</div>
-			<div class="toShow toolbar-div">
-				<a id="speedtxt">Speed:</a>
-			</div>
-			<div class="toShow toolbar-div" style="margin-right: 20px;">
-  				<input type="range" min="1" max="100" value="50" class="slider" id="speedRange">
-			  </div>
-			<div class="leftstuff" style = "margin-left: auto" order = "1" > 
-				<div class="toolbar-div" >
-					<button id="clearbtn" onclick="clearGraph();">Clear graph</button>
-				</div>
-				<div class="toolbar-div" >
-					<button id="clearbtn" onclick="location.href = 'about.html';">How to use</button>
-				</div>
+				<button id="runbtn" onclick="location.href = 'index.html';" >Return to Graph Alogorithm Visualizer</button>
 			</div>
 		</div>
-		<a id="algorithm">
-			&#160;
-		</a>
-		<div id="container">
+		<div id="helptext">
+			Watch this quick video for a rundown on how to use Graph Algorithm Visualizer
 		</div>
-		<div id = "information">
-			<div id="infotext">
-				<a id="instructions1">
-					&#160;
-				</a>
-				<br>
-				<a id="instructions2">
-					&#160;
-				</a>
-			</div>
-		</div>
+		<iframe id="helpvid" width="896" height="504" src="https://www.youtube.com/embed/hLKy2SoiKmI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+		</iframe>
+
 	</div>
 		
 	<div class="vertical_bar">
@@ -379,38 +289,6 @@
 		<div id = "title">
 			GRAPH ALGORITHM VISUALIZER
 		</div>
-		<ul class="menu" id="vertlist">
-			<li onclick="changeWhite('NewNode')"><a  id="NewNode">
-				<i class="fas fa-plus-circle"></i>
-				<span class="text">New Node</span>
-			</a></li>
-			<li onclick="changeWhite('NewEdge')"><a  id="NewEdge">
-				<i class="fas fa-bezier-curve"></i>
-				<span class="text">New Edge</span>
-			</a></li>
-			<li onclick="changeWhite('Move')"><a  id="Move" onclick="changeWhite('Move')">
-				<i class="fas fa-arrows-alt"></i>
-				<span class="text">Move Nodes</span>
-			</a></li>
-			<li onclick="changeWhite('Trash')"><a id="Trash" onclick="changeWhite('Trash')">
-				<i class="far fa-trash-alt"></i>
-				<span class="text">Delete Items</span>
-			</a></li>
-			<li onclick="changeWhite('Weights')"><a id="Weights">
-				<i class="fas fa-balance-scale"></i>
-				<span class="text" id="modifyweight">Modify Weight</span>
-			</a></li>
-			<div id="weightform">
-				<form action = "" onsubmit="weightUpdate()" autocomplete="off">
-					<input type="text" placeholder="Weights..." id="newweight">
-				</form>	
-			</div>
-		</ul>
-		<div id="happening">
-			Algorithm Details &#8594;
-		</div>
-		<div id="backforward">
-			<i class="fas fa-arrow-left fa-2x" id="left" onclick="goback();"></i><a>&#160;&#160;&#160;</a><i class="fas fa-arrow-right fa-2x" id="right" onclick="goforward();"></i>
 		</div>
 
 

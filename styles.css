@@ -112,6 +112,24 @@ body, html {
   width: 100%;
 }
 
+.leftstuff{
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+#helpvid{
+  display:block;
+  margin: auto;
+}
+
+#helptext{
+  margin-top: auto;
+  text-align:center;
+  font-size: x-large;
+  font-weight: bolder;
+
+}
 
 #information{
   order : 4;

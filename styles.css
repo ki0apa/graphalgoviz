@@ -123,7 +123,8 @@ body, html {
   text-align: center;
   background-color:rgba(114, 166, 201, .3);
   color: black;
-
+  font-size: larger;
+  font-weight: bold;
 }
 
 #happening{
@@ -149,4 +150,8 @@ body, html {
     display: inline-block;
     text-decoration: none;
     margin-bottom: 10px;
+}
+
+#infotext{
+  margin-bottom: 15px;
 }

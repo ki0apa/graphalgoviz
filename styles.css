@@ -123,7 +123,8 @@ body, html {
   text-align: center;
   background-color:rgba(114, 166, 201, .3);
   color: black;
-
+  font-size: larger;
+  font-weight: bold;
 }
 
 #happening{
@@ -164,4 +165,8 @@ body, html {
 }
 #left:hover, #right:hover {
     cursor: pointer;
+}
+
+#infotext{
+  margin-bottom: 15px;
 }

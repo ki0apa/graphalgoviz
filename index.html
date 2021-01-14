@@ -272,9 +272,6 @@
 <body id="master">
 	<div id="mainscreen">
 		<div id="topbar">
-			<div class="toolbar-div">
-				<button id="clearbtn" onclick="clearGraph();">Clear graph</button>
-			</div>
 			<div class="dropdown toolbar-div">
 				<button class="dropbtn">New Graph &#9662;</button>
 				<div class="dropdown-content">
@@ -350,6 +347,9 @@
 			<div class="toShow toolbar-div" style="margin-right: 20px;">
   				<input type="range" min="1" max="100" value="50" class="slider" id="speedRange">
   			</div>
+			<div class="toolbar-div" style="margin-left: auto;">
+				<button id="clearbtn" onclick="clearGraph();">Clear graph</button>
+			</div>
 		</div>
 		<a id="algorithm">
 			&#160;
@@ -401,6 +401,9 @@
 		</ul>
 		<div id="happening">
 			Algorithm Details &#8594;
+		</div>
+		<div id="backforward">
+			<i class="fas fa-arrow-left fa-2x" id="left" onclick="goback();"></i><a>&#160;&#160;&#160;</a><i class="fas fa-arrow-right fa-2x" id="right" onclick="goforward();"></i>
 		</div>
 
 

@@ -13,6 +13,8 @@ var weightIndex;
 var width;
 var height;
 var whitened = "NewNode";
+var left;
+var right;
 
 
 function changeWhite(buttonid){
@@ -180,6 +182,8 @@ window.onload = function(){
         algorithm = document.getElementById("algorithm");
         instructions1 = document.getElementById("instructions1");
         instructions2 = document.getElementById("instructions2");
+        left = document.getElementById("left");
+        right = document.getElementById("right");
 
         // Register a custom behavior: add a node when user click the blank part of canvas
         G6.registerBehavior('click-add-node', {
@@ -699,10 +703,13 @@ window.onload = function(){
         run.onclick = async function(){ 
           run.style.display = "none";
           for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "inline-block";
+          left.style.display = "none";
+          right.style.display = "none";
           convertGraph(); 
           await algotype();
           run.style.display = "flex";
           for(var i = 0; i < toShow.length; i++) toShow[i].style.display = "none";
+          left.style.display = "inline";
         };
 
         

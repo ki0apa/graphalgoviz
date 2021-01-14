@@ -13,6 +13,31 @@ var edgeMap;
 var sleeptime = 1000;
 var lastVisited;
 var stopped = false;
+var savedGraphs = [];
+var savedInstructions = [];
+var savedArray = [];
+var ind = 0;
+
+function updatePast(){
+	vgraph.data(savedGraphs[ind]);
+	vgraph.render();
+	updateInstructions(savedInstructions[ind]);
+	updateArray(savedArray[ind]);
+}
+
+function goback(){
+	ind--;
+	if(ind == 0) left.style.display = "none";
+	right.style.display = "inline";
+	updatePast();
+}
+
+function goforward(){
+	ind++;
+	if(ind == savedGraphs.length-1) right.style.display = "none";
+	left.style.display = "inline";
+	updatePast();
+}
 
 function sleep() {
 	var value = parseInt(document.getElementById("speedRange").value);
@@ -30,6 +55,10 @@ async function check(){
 		resetGraphDij();
 		resetGraphFlow();
 	}
+	ind = savedGraphs.length;
+	savedGraphs.push(JSON.parse(JSON.stringify(vgraph.save())));
+	savedInstructions.push(instructions1.innerHTML);
+	savedArray.push(instructions2.innerHTML);
 	return tmp;
 }
 
@@ -62,6 +91,10 @@ function convertGraph(){
 	updateInstructions("&#160;");
 	updateArray("&#160;");
 	stopped = false;
+	savedGraphs = [];
+	savedInstructions = [];
+	savedArray = [];
+	ind = 0;
 }
 
 function updateInstructions(str){
@@ -159,6 +192,7 @@ async function algobfs(){
 	}
 	updateInstructions("Done!");
 	resetGraph();
+	await check();
 }
 
 //depth first search starting at node s
@@ -188,6 +222,7 @@ async function algodfs(){
 	if(await dfs_recursive(s)) return true;
 	updateInstructions("Done!");
 	resetGraph();
+	await check();
 }
 
 function updateNodeDij(id, dist, prev, visit){
@@ -318,7 +353,9 @@ async function algodijkstra(){
 		t = prev[t];
 		if(await check()) return;
 	}
+	updateInstructions("Done!")
 	resetGraphDij();
+	await check();
 }
 
 
@@ -386,6 +423,7 @@ async function algotopsort(){
 	for(var i = 1; i < n; i++) if(!topSortVisited[i]) if(await dfsTopSort(i)) return;
 	resetGraph();
 	updateInstructions("Done!");
+	await check();
 }
 
 var parent;
@@ -431,6 +469,7 @@ async function algomst(){
 	for(var i = 0; i < edges.length; i++){
 		deleteEdge(edges[i]);
 	}
+	await check();
 }
 
 //strongly connected components
@@ -535,6 +574,7 @@ async function algoscc(){
 	updateInstructions("Done!");
 	resetGraph();
 	reverseGraph();
+	await check();
 }
 
 //Maximum flow
@@ -640,4 +680,5 @@ async function algomaxflow(){
 	updateInstructions("Done!");
 	if(await check()) return;
 	resetGraphFlow();
+	await check();
 }

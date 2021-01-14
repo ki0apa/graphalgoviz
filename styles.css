@@ -134,6 +134,13 @@ body, html {
   margin-bottom: 30px;
 }
 
+#backforward{
+  order:6;
+  text-align: center;
+  color: white;
+  margin-bottom: 10px;
+}
+
 #logo{
   display: block;
   margin-left: auto;
@@ -149,4 +156,12 @@ body, html {
     display: inline-block;
     text-decoration: none;
     margin-bottom: 10px;
+}
+
+#left, #right{
+    color: #F79A24;
+    display: none;
+}
+#left:hover, #right:hover {
+    cursor: pointer;
 }
